@@ -17,12 +17,12 @@
 //
 // Edge is looked up in its two standard install folders; set EDGE_PATH to use another browser binary.
 
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { existsSync, mkdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-// sharp is not a direct dependency: it is installed because Astro needs it for image optimisation.
+// sharp is a devDependency of this site, pinned to an exact version in package.json (Astro also uses it for image optimisation).
 import sharp from 'sharp';
 // Node strips the TypeScript types on import; the dictionaries use explicit ".ts" paths for this reason.
 import { en } from '../src/i18n/en.ts';
@@ -211,11 +211,18 @@ ${L.css.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n')}
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/** True once the file exists and has stopped growing. Edge's launcher returns at once; the picture is written a moment later. */
-async function waitForFile(path, timeoutMs) {
+/** How long Edge gets to write one picture before the script gives up on it. */
+const EDGE_TIMEOUT_MS = 60_000;
+
+/**
+ * True once the file exists and has stopped growing. Edge's launcher returns at once; the picture is written a moment later.
+ * `aborted` is polled on every round: when it returns true the wait ends at once with false (Edge could not be started).
+ */
+async function waitForFile(path, timeoutMs, aborted = () => false) {
   const end = Date.now() + timeoutMs;
   let last = -1;
   while (Date.now() < end) {
+    if (aborted()) return false;
     if (existsSync(path)) {
       const size = statSync(path).size;
       if (size > 0 && size === last) return true;
@@ -237,6 +244,67 @@ function findEdge() {
   return found;
 }
 
+/**
+ * Deletes a folder. A folder that something still holds open (a stray Edge from an earlier run that timed out) must not stop
+ * the script: the problem is printed as a warning and false is returned, so the caller can use another folder.
+ */
+function removeDir(dir) {
+  try {
+    rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
+    return true;
+  } catch (e) {
+    console.warn(`WARN could not delete ${dir}: ${e.code ?? e.message}`);
+    return false;
+  }
+}
+
+/** Deletes a file, the same way: a file that cannot be deleted (a stray Edge still holds it) is a warning and false, not a crash. */
+function removeFile(file) {
+  try {
+    rmSync(file, { force: true, maxRetries: 5, retryDelay: 200 });
+    return true;
+  } catch (e) {
+    console.warn(`WARN could not delete ${file}: ${e.code ?? e.message}`);
+    return false;
+  }
+}
+
+/**
+ * Ends every msedge.exe that was started with this --user-data-dir, and returns the ids of the processes it stopped.
+ * Edge's launcher (the process spawn() starts) hands the work to a separate browser process and exits within about 130 ms, so
+ * child.kill() cannot stop the browser itself. The browser, GPU and renderer processes all carry --user-data-dir in their command
+ * line, which is how they are found. The folder reaches PowerShell through an environment variable and the script through
+ * -EncodedCommand, so nothing needs quoting or escaping. Failures are printed as warnings; the script goes on.
+ */
+function stopEdgeUsing(profile) {
+  const sys32 = join(process.env.SystemRoot ?? 'C:\\Windows', 'System32');
+  const ps = join(sys32, 'WindowsPowerShell', 'v1.0', 'powershell.exe');
+  const script = [
+    '$p = $env:OG_EDGE_PROFILE',
+    "Get-CimInstance Win32_Process -Filter \"Name='msedge.exe'\" |",
+    '  Where-Object { $_.CommandLine -and $_.CommandLine.IndexOf($p, [System.StringComparison]::OrdinalIgnoreCase) -ge 0 } |',
+    '  ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue; $_.ProcessId }',
+  ].join('\n');
+  const r = spawnSync(ps, ['-NoProfile', '-NonInteractive', '-EncodedCommand', Buffer.from(script, 'utf16le').toString('base64')], {
+    stdio: ['ignore', 'pipe', 'pipe'],
+    encoding: 'utf8',
+    windowsHide: true,
+    timeout: 30_000,
+    env: {
+      ...process.env,
+      OG_EDGE_PROFILE: profile,
+      // Windows PowerShell 5.1 must not inherit a PowerShell 7 module path (its CIM cmdlets would not load).
+      PSModulePath: [join(process.env.ProgramFiles ?? 'C:\\Program Files', 'WindowsPowerShell', 'Modules'), join(sys32, 'WindowsPowerShell', 'v1.0', 'Modules')].join(';'),
+    },
+  });
+  if (r.error || r.status !== 0) {
+    const why = r.error ? r.error.message : ((r.stderr ?? '').trim().split(/\r?\n/)[0] || `exit code ${r.status}`);
+    console.warn(`WARN could not look for stray Edge processes: ${why}`);
+    return [];
+  }
+  return r.stdout.split(/\s+/).filter(Boolean).map(Number);
+}
+
 mkdirSync(work, { recursive: true });
 const edge = findEdge();
 let failed = false;
@@ -244,37 +312,57 @@ let failed = false;
 for (const img of selected) {
   const id = img.out.replace(/[\\/]/g, '-').replace(/\.png$/, '');
   const html = join(work, `${id}.html`);
-  const raw = join(work, `${id}.raw.png`);
   const out = join(root, img.out);
   writeFileSync(html, page(img));
-  rmSync(raw, { force: true });
+  // A stale picture must not be mistaken for Edge's new one, so a file that cannot be deleted is left alone and Edge writes to a fresh name.
+  let raw = join(work, `${id}.raw.png`);
+  if (!removeFile(raw)) raw = join(work, `${id}.raw-${Date.now()}.png`);
 
   // --user-data-dir: a separate profile per picture, so a running Edge window cannot swallow the command.
   // --allow-file-access-from-files: lets the page load the .woff2 files from node_modules over file://.
   // --virtual-time-budget: gives the page a few seconds to finish loading its fonts before the picture is taken.
-  const profile = join(work, `edge-profile-${id}`);
-  rmSync(profile, { recursive: true, force: true });
-  const child = spawn(
-    edge,
-    [
-      '--headless=new',
-      '--disable-gpu',
-      '--hide-scrollbars',
-      '--no-first-run',
-      '--force-device-scale-factor=1',
-      '--allow-file-access-from-files',
-      `--user-data-dir=${profile}`,
-      `--window-size=${img.w},${img.h}`,
-      '--virtual-time-budget=5000',
-      `--screenshot=${raw}`,
-      pathToFileURL(html).href,
-    ],
-    { stdio: 'ignore' },
-  );
-  const written = await waitForFile(raw, 60_000);
+  // A profile folder that cannot be deleted (a stray Edge from an earlier timeout still holds it) is left alone and a fresh one is used.
+  let profile = join(work, `edge-profile-${id}`);
+  if (!removeDir(profile)) profile = join(work, `edge-profile-${id}-${Date.now()}`);
+  // A failed start reaches us in one of two ways, and both must end in the FAIL line below instead of crashing the script:
+  // Node emits an 'error' event for EACCES, ENOENT, EAGAIN and a few more, and throws synchronously for the rest (EPERM, UNKNOWN).
+  let child = null;
+  let spawnError = null;
+  try {
+    child = spawn(
+      edge,
+      [
+        '--headless=new',
+        '--disable-gpu',
+        '--hide-scrollbars',
+        '--no-first-run',
+        '--force-device-scale-factor=1',
+        '--allow-file-access-from-files',
+        `--user-data-dir=${profile}`,
+        `--window-size=${img.w},${img.h}`,
+        '--virtual-time-budget=5000',
+        `--screenshot=${raw}`,
+        pathToFileURL(html).href,
+      ],
+      { stdio: 'ignore' },
+    );
+    child.on('error', (err) => {
+      spawnError ??= err;
+    });
+  } catch (err) {
+    spawnError = err;
+  }
+  const written = await waitForFile(raw, EDGE_TIMEOUT_MS, () => spawnError !== null);
+  if (spawnError) {
+    console.error(`FAIL ${img.out}: could not start Edge (${edge}): ${spawnError.code ?? ''} ${spawnError.message}`.replace(/\s+$/, ''));
+    failed = true;
+    continue;
+  }
   child.kill();
   if (!written) {
-    console.error(`FAIL ${img.out}: Edge produced no picture within 60 s.`);
+    // The launcher is long gone by now, so child.kill() did nothing: end the browser by its profile folder.
+    const stopped = stopEdgeUsing(profile);
+    console.error(`FAIL ${img.out}: Edge produced no picture within ${EDGE_TIMEOUT_MS / 1000} s${stopped.length ? ` (stopped ${stopped.length} stray Edge process${stopped.length === 1 ? '' : 'es'})` : ''}.`);
     failed = true;
     continue;
   }

@@ -9,9 +9,28 @@ import Faq from '../../components/Faq.astro';
 import DownloadCard from '../../components/DownloadCard.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import { LOCALES, getLocale } from '../../i18n/locales';
-import { t, isComplete, htmlLangFor } from '../../i18n';
+import { t, isComplete, missingPaths, extraPaths, htmlLangFor } from '../../i18n';
 
 export function getStaticPaths() {
+  // An incomplete dictionary does not stop the build: its page falls back to English and is marked noindex (see i18n/index.ts).
+  // That must not happen silently, so say which keys are missing, and which lists are shorter than the English one.
+  // A list that is longer than English does not make the page incomplete, but its extra items are dropped, so that is a warning too.
+  for (const l of LOCALES) {
+    const missing = missingPaths(l.code);
+    if (missing.length > 0) {
+      console.warn(
+        `[i18n] "${l.code}" is not fully translated, so /${l.code}/ gets <html lang="en"> and noindex, and English fills the gaps. ` +
+          `Missing from the dictionary, or a list shorter than English (${missing.length}): ${missing.join(', ')}`,
+      );
+    }
+    const extra = extraPaths(l.code);
+    if (extra.length > 0) {
+      console.warn(
+        `[i18n] "${l.code}" has lists that are longer than English, and merge() drops the extra items, so they never appear on /${l.code}/ ` +
+          `(the page itself is still served in that language): ${extra.join(', ')}`,
+      );
+    }
+  }
   return LOCALES.map((l) => ({ params: { lang: l.code } }));
 }
 

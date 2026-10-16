@@ -39,6 +39,9 @@ const { m } = Astro.props;
   .dl-card .btn-line:hover{background:var(--card-fg);color:var(--card-bg)}
   .dl-card .small{margin-top:22px;font-size:.88rem;color:var(--card-fg-2)}
   .dl-card .small :global(a){color:var(--card-link)}
+  /* The global focus ring is --ink, which is the same colour as --card-bg in both themes, so it would vanish on the card.
+     :global because the links inside .small come from set:html and carry no scoped attribute. */
+  .dl-card :global(:focus-visible){outline-color:var(--card-fg)}
   /* <Image> renders the <img>, so this rule reaches it through :global */
   .dl-card :global(.dl-icon){width:clamp(110px,16vw,200px);height:auto;filter:drop-shadow(0 18px 28px var(--icon-shadow))}
 

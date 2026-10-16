@@ -1,7 +1,7 @@
 // One-off helper: regenerates public/apple-touch-icon.png (180x180) from the 1024px app icon.
 // It is a plain proportional downscale of the same artwork: no redrawing, no simplified variant.
 // Run from the site folder:  node scripts/make-apple-touch-icon.mjs
-// `sharp` is installed as a dependency of Astro (its image service), so nothing extra is needed.
+// `sharp` is a devDependency of this site, pinned to an exact version; `npm ci` installs it.
 import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
 

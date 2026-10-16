@@ -13,7 +13,7 @@ const { m } = Astro.props;
   <Dial />
   <div class="wrap-b hero-in">
     <p class="kicker">{m.kicker}</p>
-    <h1 id="hero-title"><span>{m.line1}</span><em>{m.line2}</em></h1>
+    <h1 id="hero-title"><span>{m.line1}</span>{' '}<em>{m.line2}</em></h1>
     <p class="lede">{m.lede}</p>
     <div class="cta">
       <a class="btn-ink" href={LINKS.releases}>{m.download}</a>

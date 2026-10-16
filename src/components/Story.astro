@@ -10,7 +10,10 @@ interface Props {
 }
 const { m } = Astro.props;
 
-/** Story order, and the screenshot that goes with each. `crop` shows only the two reset tiles of that capture. */
+/**
+ * Story order, and the screenshot that goes with each. `crop` shows only the two reset tiles of that capture.
+ * The crop is done in CSS, not in the image file: if you replace windows-1.0.0.png, redo the numbers in the `.crop` rules below.
+ */
 const stories = [
   { key: 'overview', src: shotOverview, width: 880, height: 722, crop: false },
   { key: 'resets', src: shotResets, width: 678, height: 680, crop: true },
@@ -73,6 +76,12 @@ const stories = [
   /* <Image> renders the <img>, so these rules reach it through :global */
   .paper :global(img){width:100%;border-radius:1px;box-shadow:0 0 0 1px var(--shot-edge)}
   .paper figcaption{padding:12px 4px 0;font-size:13px;line-height:1.45;color:var(--mute)}
+  /* The reset-tiles crop. windows-1.0.0.png is 678x680, and the two tiles are rows 468 to 640 of it (172 rows tall).
+     aspect-ratio:678/172  = image width : crop height, so the box is exactly as tall as those 172 rows.
+     top:-272.1%           = -(first row / crop height) = -(468 / 172), rounded. A percentage `top` is relative to the box's height,
+                             so this moves the full-width image up by 468 image rows, and rows 468 to 640 are what stays visible.
+     For a new screenshot: measure the first and last row of the tiles, then set aspect-ratio to width/(last - first)
+     and top to -(first / (last - first)) as a percentage. Also update width and height in the `stories` array above. */
   .crop{position:relative;overflow:hidden;aspect-ratio:678/172;background:#0f172a;box-shadow:0 0 0 1px var(--shot-edge)}
   .crop :global(img){position:absolute;left:0;top:-272.1%;width:100%;max-width:none;box-shadow:none}
   .also{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--rule);padding-block:clamp(40px,6vw,72px)}

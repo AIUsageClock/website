@@ -13,10 +13,10 @@
   --mat:#fffdf8; --mat-edge:transparent; --shot-edge:transparent;
   --paper-shadow:0 1px 0 rgba(28,25,23,.05),0 2px 6px rgba(28,25,23,.08),0 26px 50px -22px rgba(28,25,23,.42);
   --code-bg:rgba(28,25,23,.07); --dial-k:1;
-  /* download card and floating bits */
+  /* download card */
   --card-bg:#1c1917; --card-fg:#f7f4ee; --card-fg-2:#d6d3d1; --card-link:#fdba74;
   --btn-o-bg:#ea580c; --btn-o-fg:#1c1917; --btn-o-hover:#fb923c;
-  --float-shadow:0 8px 24px rgba(28,25,23,.3); --icon-shadow:rgba(0,0,0,.55);
+  --icon-shadow:rgba(0,0,0,.55);
   --f-serif:"Fraunces Variable","Fraunces","Iowan Old Style","Palatino Linotype",Georgia,serif;
   --f-sans:"Inter Variable","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
   --wrap:1180px;
@@ -35,7 +35,7 @@
   --code-bg:rgba(242,237,228,.1); --dial-k:.7;
   --card-bg:#f2ede4; --card-fg:#1a1714; --card-fg-2:#44403c; --card-link:#9a3412;
   --btn-o-bg:#c2410c; --btn-o-fg:#fff7ed; --btn-o-hover:#9a3412;
-  --float-shadow:0 8px 24px rgba(0,0,0,.6); --icon-shadow:rgba(28,25,23,.45);
+  --icon-shadow:rgba(28,25,23,.45);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
@@ -49,7 +49,7 @@
     --code-bg:rgba(242,237,228,.1); --dial-k:.7;
     --card-bg:#f2ede4; --card-fg:#1a1714; --card-fg-2:#44403c; --card-link:#9a3412;
     --btn-o-bg:#c2410c; --btn-o-fg:#fff7ed; --btn-o-hover:#9a3412;
-    --float-shadow:0 8px 24px rgba(0,0,0,.6); --icon-shadow:rgba(28,25,23,.45);
+    --icon-shadow:rgba(28,25,23,.45);
   }
 }
 

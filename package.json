@@ -12,6 +12,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "test:html": "node scripts/test-html-check.mjs",
     "og": "node scripts/render-og.mjs"
   },
   "dependencies": {
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
+    "sharp": "0.35.5",
     "typescript": "6.0.3"
   }
 }

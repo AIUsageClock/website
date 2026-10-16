@@ -20,6 +20,7 @@ npm run dev       # dev server with live reload
 npm run build     # production build into dist/
 npm run preview   # serve dist/ locally
 npm run check     # type-check the Astro and TypeScript sources
+npm run test:html # test the markup rules for the `...Html` dictionary strings (no dependencies; exits 1 on a failure)
 npm run og        # redraw the link-preview images (Windows with Microsoft Edge only, see below)
 ```
 
@@ -37,25 +38,39 @@ Every language has its own prefix, and `/` is a small page that sends the visito
 | `/fr/` | French | `fr-FR` | `fr` | `fr_FR` |
 | `/de/` | German | `de-DE` | `de` | `de_DE` |
 
-The table lives in `src/i18n/locales.ts`; the language menu, the hreflang alternates (every page lists all seven
-languages plus `x-default`, which points at `/`), the Astro i18n routing and the link-preview images all read from it.
+The table lives in `src/i18n/locales.ts`; the language menu, the hreflang alternates, the Astro i18n routing and the
+link-preview images all read from it. The hreflang alternates are listed by each language page and by the root page: all
+seven languages plus `x-default`, which points at `/`. The 404 page lists none.
 
 **Root page (`/`)**: the script on it sends the visitor to the first of these that exists: the language saved by the
 language menu (`localStorage` key `aiuc-lang`), then the first entry of the browser's language list that the site can
-serve, then English. Chinese is told apart by script and region (`zh-TW`, `zh-HK`, `zh-MO` and `Hant` go to Traditional,
-other Chinese to Simplified); every other language is matched by its base subtag, so `es-MX`, `es-ES` and `es-419` all go to
-`/es/`, `fr-CA` to `/fr/`, `de-AT` to `/de/`, and a language the site does not have (`pt-BR`) is skipped.
-Without JavaScript the page lists a link to each language.
+serve, then English. Each tag is first compared whole (lower case) with the site's language codes, so a code that carries a
+region is met exactly. Chinese that is not an exact code is told apart by script and region (`zh-TW`, `zh-HK`, `zh-MO` and `Hant`
+go to Traditional, other Chinese to Simplified); every other language is matched by its base subtag, so `es-MX`, `es-ES` and
+`es-419` all go to `/es/`, `fr-CA` to `/fr/`, `de-AT` to `/de/`, and a language the site does not have (`pt-BR`) is skipped.
+Without JavaScript, a `<noscript>` meta refresh sends the visitor to `/en/`. The links to each language on the page are the
+fallback for when the script's redirect fails or is blocked.
 
 **404 page**: one file for every address, so it explains in English and offers a "back to the home page" link in every
 language (each to that language's home page; text from the dictionaries, English where a language has none yet).
 
 ## Adding a language
 
-1. Add an entry to `src/i18n/locales.ts` (its position is its position in the language menu).
+1. Add an entry to `src/i18n/locales.ts` (its position is its position in the language menu). A code that carries a region
+   (say `pt-br`) is matched whole by the root page's language detection before the base language is tried, so `pt-BR`
+   reaches `/pt-br/` while `pt-PT` does not, unless there is a plain `pt` entry as well.
 2. Create a dictionary next to `src/i18n/en.ts` (start from `{}`; any missing text falls back to English) and register
    it in `src/i18n/index.ts`. A page whose dictionary does not cover every English string is served with
-   `<html lang="en">` and `noindex` until it does.
+   `<html lang="en">` and `noindex` until it does. The build still succeeds, but prints a warning that lists the missing key
+   paths, and the lists that are shorter than English (for example `faq.items.unsigned.listHtml: en 3 / de 2`).
+   A translated list that is longer than the English one does not make the page incomplete: the page keeps its own language,
+   the extra items are dropped (they are never shown), and the build prints a separate warning that names the list
+   (`faq.items.data.parasHtml: en 2 / de 3`).
+   A key that ends in `Html` is rendered unescaped, so the build checks every such string in every dictionary and fails on
+   anything but `<strong>`, `<em>`, `<code>` and `<a href="...">` whose href starts with `https://`, `/` or `#`
+   (`src/i18n/html-check.ts`). It reports the problems of all the dictionaries at once. The check guards against typos and
+   pasted markup (it also refuses `//`, `/\`, `/&` and `/` followed by a tab or line break), not against a hostile author:
+   an `https://` link may go to any host. `npm run test:html` runs its test cases.
 3. If the language has no translated guides in the product repository, nothing else is needed: `docLink()` in `src/site.ts`
    links the setup and usage guides to the English files. Add the language's file-name suffix to `DOC_SUFFIX` there once
    translated guides exist.
@@ -95,8 +110,6 @@ regenerates it.
   and a smaller hero size than English because kana lines are longer.
 - Rules inside a component are written as `:global(:root:lang(ja)) .selector`: Astro's scoped selectors carry an attribute per
   compound selector, so only a rule written inside the component outranks them without `!important`.
-- Two other mincho fonts (Shippori Mincho, Zen Old Mincho) are set beside Noto Serif JP on the font comparison page, in case the
-  heading font should change.
 
 ## Spanish, French and German pages
 
@@ -125,7 +138,7 @@ node scripts/render-og.mjs --skip-github  # every language, GitHub card left alo
 ```
 
 This needs Windows with Microsoft Edge: `scripts/render-og.mjs` writes one HTML page per picture into `_tmp/og/`, prints it to
-PNG with headless Edge, checks the size and shrinks the file. Set `EDGE_PATH` if Edge is not in its standard folder.
+PNG with headless Edge, checks the size and shrinks the file (with `sharp`, a devDependency pinned in `package.json`). Set `EDGE_PATH` if Edge is not in its standard folder.
 The text comes from the language dictionaries (`hero.kicker`, `hero.line1`, `hero.line2`), the fonts from `node_modules` (Japanese
 uses Noto Serif JP, the Chinese pages Noto Serif TC and SC), and the picture on the right from `src/assets/windows-1.0.0.png`.
 The tagline starts at a tuned size and shrinks until each line fits the left column; if it still does not fit at the smallest

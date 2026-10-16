@@ -2,7 +2,7 @@ import type { DeepPartial, Messages } from './index';
 import { LINKS, VERSION } from '../site.ts';
 
 /**
- * Japanese. Written natively in the voice of runs/2026-10-16-i18n/ja/README.ja.md (desu/masu body,
+ * Japanese. Written natively in the voice of https://github.com/AIUsageClock/ai-usage-clock/blob/main/README.ja.md (desu/masu body,
  * plain-form headlines), not translated sentence by sentence; the facts follow en.ts key by key.
  * Keep UI names that the app shows in English (Settings, Codex Resets, Announced, Reset, Banked, Watch,
  * Session, Weekly) in English. Half-width space between Japanese and half-width alphanumerics.

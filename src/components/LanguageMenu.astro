@@ -78,10 +78,11 @@ const { current, path = '', label } = Astro.props;
   if (menu && btn && list) {
     const items = (): HTMLAnchorElement[] => Array.from(list.querySelectorAll<HTMLAnchorElement>('a'));
 
-    const openMenu = (focusFirst: boolean) => {
+    const openMenu = (focus: 'first' | 'last' | null) => {
       list.hidden = false;
       btn.setAttribute('aria-expanded', 'true');
-      if (focusFirst) items()[0]?.focus();
+      if (focus === 'first') items()[0]?.focus();
+      else if (focus === 'last') items().at(-1)?.focus();
     };
     const closeMenu = (returnFocus: boolean) => {
       if (list.hidden) return;
@@ -91,13 +92,16 @@ const { current, path = '', label } = Astro.props;
     };
 
     btn.addEventListener('click', () => {
-      if (list.hidden) openMenu(false);
+      if (list.hidden) openMenu(null);
       else closeMenu(false);
     });
     btn.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowDown') {
         e.preventDefault();
-        openMenu(true);
+        openMenu('first');
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        openMenu('last');
       }
     });
     list.addEventListener('keydown', (e) => {
@@ -116,11 +120,18 @@ const { current, path = '', label } = Astro.props;
       } else if (e.key === 'End') {
         e.preventDefault();
         it[it.length - 1]?.focus();
+      } else if (e.key === ' ' && i !== -1) {
+        /* a menu item is a link, and a link only answers Enter: Space must act like a click and must not scroll the page */
+        e.preventDefault();
+        it[i]?.click();
       }
     });
     list.addEventListener('click', (e) => {
       const a = (e.target as Element | null)?.closest<HTMLAnchorElement>('a');
       if (!a) return;
+      /* Ctrl/Cmd/Shift/Alt + click and the middle button open the link elsewhere (a new tab or window): this page keeps its
+         language, so the choice is not saved, and the browser does what it always does. */
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || e.button !== 0) return;
       const code = a.dataset.code;
       if (code) {
         try {

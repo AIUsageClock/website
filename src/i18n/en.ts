@@ -5,6 +5,8 @@
  * Conventions
  *  - A key that ends in `Html` holds a small piece of trusted HTML (<strong>, <em>, <code>, <a>)
  *    and is rendered unescaped. Every other string is plain text.
+ *    The build enforces this (html-check.ts): other tags, any attribute but a single href on <a>, and an href that does not
+ *    start with https://, / or # stop it, in every language's dictionary.
  *  - Object keys are stable identifiers (they are also used for anchors and image lookup), not copy.
  */
 import { LINKS, VERSION } from '../site.ts';
@@ -235,7 +237,11 @@ export const en = {
     choose: 'Choose your language',
   },
 
-  /** Shown on the root page and on the 404 page, which are not tied to one language: both show all three dictionaries. */
+  /**
+   * Used by the 404 page only. It is one file for every address, so it is not tied to one language: `heading` and `body` are
+   * read from this (English) dictionary, and `back` is read from every language's dictionary, one link per language.
+   * The root page has its own block above (`root`).
+   */
   notFound: {
     heading: 'Page not found',
     body: 'This address does not lead to a page on this site. Check the link, or go back to the home page.',

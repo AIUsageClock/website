@@ -2,7 +2,7 @@ import type { DeepPartial, Messages } from './index';
 import { LINKS, VERSION } from '../site.ts';
 
 /**
- * French (France). Written natively in the voice of runs/2026-10-16-i18n/fr/README.fr.md, not translated
+ * French (France). Written natively in the voice of https://github.com/AIUsageClock/ai-usage-clock/blob/main/README.fr.md, not translated
  * sentence by sentence; the facts follow en.ts key by key. The reader is addressed as vous.
  * Keep UI names that the app shows in English (Settings, Codex Resets, Announced, Reset, Banked, Watch,
  * Session, Weekly) in English. Agreed wording: limits = quotas / limites, reset = réinitialisation

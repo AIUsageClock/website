@@ -3,7 +3,7 @@ import { LINKS, VERSION } from '../site.ts';
 
 /**
  * Simplified Chinese (Mainland China), written natively rather than translated from en.ts.
- * Facts follow en.ts; wording follows the zh-CN README (repo/README.zh-CN.md).
+ * Facts follow en.ts; wording follows the zh-CN README (https://github.com/AIUsageClock/ai-usage-clock/blob/main/README.zh-CN.md).
  * Terms: widget = 小组件, tile = 卡片, Banked = 重置券, FAQ = 常见问题, beta = 测试版.
  * Keep UI names that the app shows in English (Settings, Codex Resets, Announced, Reset, Banked, Watch) in English.
  */

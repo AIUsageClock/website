@@ -1,5 +1,6 @@
 ---
-// Root "/": picks a language and redirects. It is a real page so that crawlers, and visitors without JavaScript, see links.
+// Root "/": picks a language and redirects. It is a real page so that crawlers see links. Without JavaScript, the <noscript>
+// meta refresh sends the visitor to /en/. The links on this page are the fallback for when the script's redirect fails or is blocked.
 import { Image } from 'astro:assets';
 import icon from '../assets/aiusageclockicon.png';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -17,16 +18,21 @@ const codes = LOCALES.map((l) => l.code);
     <script is:inline data-codes={codes.join(',')}>
       /* Where to go, in order: 1) the language saved by the language menu (aiuc-lang), if the site has it,
          2) the browser's language list, in the visitor's order: the first entry the site can serve wins.
-            Chinese is told apart by script and region (Traditional: zh-TW, zh-HK, zh-MO, Hant -> zh-tw; Simplified or plain zh -> zh-cn);
-            every other language is matched by its base subtag against the site's codes (en, ja, es, fr, de), so es-MX, es-ES and
-            es-419 all go to es, fr-CA to fr, de-AT to de. A language the site does not have (pt-BR) is skipped and the next entry is tried,
+            A tag is first compared whole (lower case, "_" turned into "-") with the site's codes, so a site code that carries a
+            region (zh-tw today, a future pt-br) is met by zh-TW or pt-BR before anything is simplified.
+            Chinese that is not an exact code is told apart by script and region (Traditional: zh-TW, zh-HK, zh-MO, Hant -> zh-tw;
+            Simplified or plain zh -> zh-cn); every other language is matched by its base subtag against the site's codes
+            (en, ja, es, fr, de), so es-MX, es-ES and es-419 all go to es, fr-CA to fr, de-AT to de. A language the site does not
+            have (pt-BR today) is skipped and the next entry is tried,
          3) English. */
       (function () {
         var codes = (document.currentScript && document.currentScript.getAttribute('data-codes') || 'en').split(',');
         function known(code) { return codes.indexOf(code) !== -1; }
         function go(code) { location.replace('/' + code + '/'); }
         function pick(tag) {
-          var p = String(tag || '').toLowerCase().split(/[-_]/);
+          var full = String(tag || '').toLowerCase().replace(/_/g, '-');
+          var p = full.split('-');
+          if (known(full)) return full;
           if (p[0] === 'zh') {
             if (p.indexOf('hant') !== -1) return 'zh-tw';
             if (p.indexOf('hans') !== -1) return 'zh-cn';

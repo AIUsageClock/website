@@ -34,6 +34,7 @@ const moments = [
               <p class="when">{item.when}</p>
               <h3>
                 {item.tag && <span class:list={['tag', kind]}>{item.tag}</span>}
+                {item.tag && <span class="sr">: </span>}
                 {item.heading}
               </h3>
               <p class="body">{item.body}</p>

@@ -2,7 +2,7 @@ import type { DeepPartial, Messages } from './index';
 import { LINKS, VERSION } from '../site.ts';
 
 /**
- * German (Germany). Written natively in the voice of runs/2026-10-16-i18n/de/README.de.md, not translated
+ * German (Germany). Written natively in the voice of https://github.com/AIUsageClock/ai-usage-clock/blob/main/README.de.md, not translated
  * sentence by sentence; the facts follow en.ts key by key.
  * Address the reader as du, lowercase (as Apple's de-de support pages and most German open-source docs do).
  * Vocabulary: Rechner, herunterladen, anmelden, API-Schlüssel, Zugangsdaten, Benachrichtigung, Kachel (tile),

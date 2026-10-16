@@ -44,7 +44,7 @@ const { toDark, toLight } = Astro.props;
        the chosen colour, so the browser UI matches the page even when the choice differs from the system. */
     const chosen = explicitTheme();
     for (const m of metas) {
-      m.content = chosen ? COLORS[chosen] : m.media.includes('dark') ? COLORS.dark : COLORS.light;
+      m.content = chosen ? COLORS[chosen] : (m.getAttribute('media') || '').includes('dark') ? COLORS.dark : COLORS.light;
     }
   }
 

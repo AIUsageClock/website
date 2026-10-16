@@ -2,7 +2,7 @@ import type { DeepPartial, Messages } from './index';
 import { LINKS, VERSION } from '../site.ts';
 
 /**
- * Traditional Chinese (Taiwan). Written natively in the voice of repo/README.zh-TW.md, not translated
+ * Traditional Chinese (Taiwan). Written natively in the voice of https://github.com/AIUsageClock/ai-usage-clock/blob/main/README.zh-TW.md, not translated
  * sentence by sentence; the facts follow en.ts key by key. Keep UI names that the app shows in English
  * (Settings, Codex Resets, Announced, Reset, Banked, Watch, Session, Weekly) in English.
  * Agreed wording: Banked = 重置券, FAQ = 常見問答, beta = 測試版.
