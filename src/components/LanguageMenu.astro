@@ -53,6 +53,17 @@ const { current, path = '', label } = Astro.props;
   .lang-list a:hover{background:var(--code-bg)}
   .lang-list a:focus-visible{outline-offset:-2px}
   .lang-list a[aria-current]{font-weight:600}
+  @media (max-width:560px){
+    /* On a narrow screen the globe button is too far from the right edge for a list of this width to hang from it
+       (it would run off the left edge), so the list hangs from the header row instead: SiteHeader makes .top-in the
+       positioned ancestor, and the list lines up with the right edge of the page content, 8px below the button
+       (the row is 20px padding + 40px buttons + 20px padding). */
+    .lang-menu{position:static}
+    .lang-list{right:var(--gutter);top:calc(100% - 12px)}
+  }
+  @media (max-width:380px){
+    .icon-btn.lang-btn{padding:0 10px}
+  }
   .lang-list .ck{width:1em;flex:none;color:var(--orange-ink);font-weight:700;text-align:center}
 </style>
 

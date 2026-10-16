@@ -3,18 +3,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import { LOCALES, DEFAULT_LOCALE, getLocale } from '../i18n/locales';
-import { t } from '../i18n';
+import { t, hasKey } from '../i18n';
 import { SITE_NAME } from '../site';
 
-// This page is one file for every address, so it cannot know the visitor's language:
-// the default language fills the page chrome, and every language's short text is shown.
+// This page is one file for every address, so it cannot know the visitor's language: the explanation is in the
+// default language, and the way back to the home page is offered in every language, each one a link to that
+// language's own home page. A language whose dictionary has no text for the link yet shows the English text, tagged as English.
 const m = t(DEFAULT_LOCALE);
-const others = LOCALES.filter((l) => l.code !== DEFAULT_LOCALE).map((l) => ({ locale: l, m: t(l.code) }));
-const all = LOCALES.map((l) => ({ locale: l, m: t(l.code) }));
-const title = `${all.map((x) => x.m.notFound.heading).join(' · ')} — ${SITE_NAME}`;
+const back = LOCALES.map((l) => ({
+  locale: l,
+  text: t(l.code).notFound.back,
+  lang: hasKey(l.code, 'notFound', 'back') ? l.htmlLang : getLocale(DEFAULT_LOCALE).htmlLang,
+}));
 ---
 
-<BaseLayout title={title} description={m.meta.description} htmlLang={getLocale(DEFAULT_LOCALE).htmlLang} noindex>
+<BaseLayout title={`${m.notFound.heading} — ${SITE_NAME}`} description={m.meta.description} htmlLang={getLocale(DEFAULT_LOCALE).htmlLang} noindex>
   <a class="skip" href="#main">{m.a11y.skip}</a>
   {/* No language is "current" here, so the language menu ticks none and every entry leads to a home page. */}
   <SiteHeader lang="" m={m} brandHref="/" />
@@ -22,25 +25,17 @@ const title = `${all.map((x) => x.m.notFound.heading).join(' · ')} — ${SITE_N
     <p class="lab">404</p>
     <h1>{m.notFound.heading}</h1>
     <p class="body">{m.notFound.body}</p>
-    {
-      others.map((o) => (
-        <p class="body" lang={o.locale.htmlLang}>
-          <strong>{o.m.notFound.heading}。</strong>
-          {o.m.notFound.body}
-        </p>
-      ))
-    }
-    {/* "/" is the language-picking redirect page, so each visitor lands on the home page in their own language. */}
-    <a class="btn-ink" href="/">
+    <ul class="back">
       {
-        all.map((x, i) => (
-          <>
-            {i > 0 && <span aria-hidden="true">·</span>}
-            <span lang={x.locale.htmlLang}>{x.m.notFound.back}</span>
-          </>
+        back.map((b) => (
+          <li>
+            <a class="btn-line" href={`/${b.locale.code}/`} lang={b.lang} hreflang={b.locale.hreflang}>
+              {b.text}
+            </a>
+          </li>
         ))
       }
-    </a>
+    </ul>
   </main>
   <SiteFooter m={m.footer} brandHref="/" />
 </BaseLayout>
@@ -49,11 +44,11 @@ const title = `${all.map((x) => x.m.notFound.heading).join(' · ')} — ${SITE_N
   .nf{display:flex;flex-direction:column;align-items:center;text-align:center;padding-block:clamp(64px,14vw,144px)}
   .nf h1{margin-top:16px;font:600 clamp(2.4rem,7vw,5rem)/1 var(--f-serif);letter-spacing:-.04em;text-wrap:balance}
   .nf .body{margin-top:20px;max-width:30em;color:var(--ink-2);text-wrap:pretty}
-  .nf .btn-ink{margin-top:32px}
-  .nf .btn-ink span{white-space:nowrap}
+  .nf .back{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 12px;max-width:40em;margin-top:32px}
+  .nf .back a{text-align:center}
   @media (max-width:560px){
-    /* three languages side by side no longer fit on one line: stack them instead of letting a label break mid-word */
-    .nf .btn-ink{flex-direction:column;gap:2px;padding-block:12px;border-radius:24px;line-height:1.3}
-    .nf .btn-ink [aria-hidden="true"]{display:none}
+    /* seven links no longer share rows: one per line, as wide as the longest one, so the column looks tidy */
+    .nf .back{flex-direction:column;align-items:stretch;width:min(100%,18em);gap:10px}
+    .nf .back a{display:flex}
   }
 </style>

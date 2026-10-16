@@ -32,11 +32,18 @@ const { lang, m, path = '', brandHref = '#top' } = Astro.props;
 </header>
 
 <style>
-  .top-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:20px}
+  /* position:relative: on a narrow screen the language list hangs from this row (see LanguageMenu.astro) */
+  .top-in{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:20px}
   .top-r{display:flex;align-items:center;gap:10px}
 
   @media (max-width:519px){
     /* keep logo, language, theme and Download on one row: logo text stays available to screen readers */
     .top-in .brand span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  }
+  @media (max-width:380px){
+    /* a long label ("Herunterladen") plus the language and theme buttons must still fit in 320px: tighten gaps and padding */
+    .top-in{gap:8px}
+    .top-r{gap:6px}
+    .top-r .btn-ink.sm{padding:0 14px}
   }
 </style>

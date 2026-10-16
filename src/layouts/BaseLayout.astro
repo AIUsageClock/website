@@ -5,12 +5,13 @@
 import '@fontsource-variable/fraunces/opsz.css';
 import '@fontsource-variable/fraunces/opsz-italic.css';
 import '@fontsource-variable/inter/wght.css';
-// The Chinese heading fonts are imported as URLs ("?url"), not as plain CSS imports. A plain import would be
-// bundled into the one stylesheet that every language shares (all three languages are one route), so the English
-// page would carry the Chinese @font-face rules too. A URL import still has Vite process the CSS and copy the
+// The CJK heading fonts are imported as URLs ("?url"), not as plain CSS imports. A plain import would be
+// bundled into the one stylesheet that every language shares (all languages are one route), so the English
+// page would carry the Chinese and Japanese @font-face rules too. A URL import still has Vite process the CSS and copy the
 // .woff2 chunks into dist/_astro, but leaves it to the template below to link only the stylesheet a page needs.
 import notoSerifTcCss from '@fontsource-variable/noto-serif-tc/index.css?url';
 import notoSerifScCss from '@fontsource-variable/noto-serif-sc/index.css?url';
+import notoSerifJpCss from '@fontsource-variable/noto-serif-jp/index.css?url';
 import '../styles/global.css';
 import { LOCALES, DEFAULT_LOCALE, getLocale } from '../i18n/locales';
 import { t } from '../i18n';
@@ -26,15 +27,21 @@ interface Props {
   canonicalPath?: string;
   /** Path of this page under each locale prefix ("" for the home page). Sets the hreflang alternates plus x-default. */
   alternatePath?: string;
-  /** Locale code of the page's language ("en", "zh-tw", "zh-cn"). Picks the link-preview image and og:locale. Defaults to English. */
+  /** Locale code of the page's language (one of the codes in i18n/locales.ts). Picks the link-preview image and og:locale. Defaults to English. */
   locale?: string;
 }
 
 const { title, description, htmlLang, noindex = false, canonicalPath, alternatePath, locale = DEFAULT_LOCALE } = Astro.props;
 
-// Heading font for Chinese pages, chosen by the <html lang> the page actually carries, the same value the
-// :lang() rules in global.css key on. English pages, and pages that fall back to English, get none.
-const cjkHeadingCss = /^zh-hant/i.test(htmlLang) ? notoSerifTcCss : /^zh-hans/i.test(htmlLang) ? notoSerifScCss : undefined;
+// Heading font for Chinese and Japanese pages, chosen by the <html lang> the page actually carries, the same value the
+// :lang() rules in global.css key on. English and European-language pages, and any page that falls back to English, get none.
+const cjkHeadingCss = /^zh-hant/i.test(htmlLang)
+  ? notoSerifTcCss
+  : /^zh-hans/i.test(htmlLang)
+    ? notoSerifScCss
+    : /^ja(-|$)/i.test(htmlLang)
+      ? notoSerifJpCss
+      : undefined;
 
 // Link preview: one 1200x630 image per language (public/og/<code>.png, made by scripts/render-og.mjs).
 const loc = getLocale(locale);

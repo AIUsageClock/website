@@ -1,14 +1,19 @@
 #!/usr/bin/env node
 // Renders the link-preview images:
-//   public/og/en.png, zh-tw.png, zh-cn.png   1200x630, one per language (og:image / twitter:image)
+//   public/og/<code>.png                     1200x630, one per language in src/i18n/locales.ts (og:image / twitter:image)
 //   branding/github-social-preview.png       1280x640, English, for the repository's "Social preview" setting
 //
 // Not part of the site build: the PNGs are committed. Run it again when the tagline, the brand or the
 // screenshot changes (`npm run og`). It needs Windows with Microsoft Edge: the pictures are an HTML page
 // per image, printed to PNG by headless Edge, so the fonts come out exactly as they do on the site.
 //
-// Text comes from the language dictionaries; fonts are the Fontsource files in node_modules; the picture on
-// the right is src/assets/windows-1.0.0.png. Nothing is fetched from the network.
+//   node scripts/render-og.mjs                 every language, plus the GitHub card
+//   node scripts/render-og.mjs ja fr           only the listed languages (codes from locales.ts), and the GitHub card only if "github" is listed
+//   node scripts/render-og.mjs --skip-github   every language, leave branding/github-social-preview.png alone
+//
+// Text comes from the language dictionaries (a language that has not translated a string yet shows the English one);
+// fonts are the Fontsource files in node_modules; the picture on the right is src/assets/windows-1.0.0.png.
+// Nothing is fetched from the network.
 //
 // Edge is looked up in its two standard install folders; set EDGE_PATH to use another browser binary.
 
@@ -23,6 +28,11 @@ import sharp from 'sharp';
 import { en } from '../src/i18n/en.ts';
 import { zhTw } from '../src/i18n/zh-tw.ts';
 import { zhCn } from '../src/i18n/zh-cn.ts';
+import { ja } from '../src/i18n/ja.ts';
+import { es } from '../src/i18n/es.ts';
+import { fr } from '../src/i18n/fr.ts';
+import { de } from '../src/i18n/de.ts';
+import { LOCALES } from '../src/i18n/locales.ts';
 import { SITE_NAME } from '../src/site.ts';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -32,41 +42,72 @@ const require = createRequire(import.meta.url);
 /** Absolute file:// URL of a file inside a Fontsource package, e.g. fontCss('fraunces/opsz.css'). */
 const fontCss = (spec) => pathToFileURL(require.resolve(`@fontsource-variable/${spec}`)).href;
 
-/** Per language: dictionary, <html lang>, and the font stacks (Fraunces first, so Latin keeps its look). */
-const LANGS = {
-  en: {
-    dict: en,
-    htmlLang: 'en',
-    css: [fontCss('fraunces/opsz.css'), fontCss('fraunces/opsz-italic.css'), fontCss('inter/wght.css')],
-    serif: '"Fraunces Variable","Iowan Old Style","Palatino Linotype",Georgia,serif',
-    sans: '"Inter Variable",system-ui,"Segoe UI",sans-serif',
-  },
-  'zh-tw': {
-    dict: zhTw,
-    htmlLang: 'zh-Hant-TW',
-    css: [fontCss('fraunces/opsz.css'), fontCss('fraunces/opsz-italic.css'), fontCss('inter/wght.css'), fontCss('noto-serif-tc/index.css')],
-    serif: '"Fraunces Variable","Noto Serif TC Variable","Songti TC","PMingLiU",serif',
-    sans: '"Inter Variable","PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif',
-  },
-  'zh-cn': {
-    dict: zhCn,
-    htmlLang: 'zh-Hans-CN',
-    css: [fontCss('fraunces/opsz.css'), fontCss('fraunces/opsz-italic.css'), fontCss('inter/wght.css'), fontCss('noto-serif-sc/index.css')],
-    serif: '"Fraunces Variable","Noto Serif SC Variable","Songti SC","SimSun",serif',
-    sans: '"Inter Variable","PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif',
-  },
+/** Dictionary of every language in locales.ts. A new language must be added here too (the script stops if it is missing). */
+const DICTS = { en, 'zh-tw': zhTw, 'zh-cn': zhCn, ja, es, fr, de };
+
+const LATIN = {
+  css: [fontCss('fraunces/opsz.css'), fontCss('fraunces/opsz-italic.css'), fontCss('inter/wght.css')],
+  serif: '"Fraunces Variable","Iowan Old Style","Palatino Linotype",Georgia,serif',
+  sans: '"Inter Variable",system-ui,"Segoe UI",sans-serif',
+  cjk: false,
+  /** Tagline size the fit step starts from (px); it shrinks until each line fits the left column, down to `minFs`, then lets the lines wrap. */
+  startFs: 68,
+  minFs: 44,
 };
 
 /**
- * The four pictures. `brand` is the size of the app icon and the wordmark (the GitHub card shows them larger, because
- * the repository page has no site name next to the image); `dial` is the diameter of the clock-dial ticks, a bezel around the screenshot.
+ * Per language, on top of LATIN: the extra heading font (Fraunces stays first, so Latin letters keep their look) and the
+ * font stacks. Spanish, French and German need nothing extra: the Fraunces and Inter files carry the accented letters.
+ */
+const EXTRA = {
+  'zh-tw': {
+    css: [...LATIN.css, fontCss('noto-serif-tc/index.css')],
+    serif: '"Fraunces Variable","Noto Serif TC Variable","Songti TC","PMingLiU",serif',
+    sans: '"Inter Variable","PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif',
+    cjk: true,
+    startFs: 62,
+  },
+  'zh-cn': {
+    css: [...LATIN.css, fontCss('noto-serif-sc/index.css')],
+    serif: '"Fraunces Variable","Noto Serif SC Variable","Songti SC","SimSun",serif',
+    sans: '"Inter Variable","PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif',
+    cjk: true,
+    startFs: 62,
+  },
+  ja: {
+    css: [...LATIN.css, fontCss('noto-serif-jp/index.css')],
+    serif: '"Fraunces Variable","Noto Serif JP Variable","Hiragino Mincho ProN","Yu Mincho",serif',
+    sans: '"Inter Variable","Hiragino Sans","Yu Gothic UI","Meiryo","Noto Sans JP",system-ui,sans-serif',
+    cjk: true,
+    startFs: 60,
+    minFs: 48,
+  },
+};
+
+/** Per language: dictionary, <html lang> (the one locales.ts gives a fully translated page), font stacks. */
+const LANGS = Object.fromEntries(
+  LOCALES.map((l) => {
+    if (!(l.code in DICTS)) throw new Error(`No dictionary for "${l.code}" in scripts/render-og.mjs: import it and add it to DICTS.`);
+    return [l.code, { ...LATIN, ...EXTRA[l.code], dict: DICTS[l.code], htmlLang: l.htmlLang }];
+  }),
+);
+
+/**
+ * The pictures: one link preview per language, plus the GitHub card. `brand` is the size of the app icon and the wordmark
+ * (the GitHub card shows them larger, because the repository page has no site name next to the image); `dial` is the diameter
+ * of the clock-dial ticks, a bezel around the screenshot; `startFs` overrides the language's starting tagline size.
  */
 const IMAGES = [
-  { lang: 'en', out: 'public/og/en.png', w: 1200, h: 630, icon: 64, brandFs: 30, tagFs: { en: 68, zh: 62 }, shotW: 430, shotX: 892, dial: 580, rot: 1.6 },
-  { lang: 'zh-tw', out: 'public/og/zh-tw.png', w: 1200, h: 630, icon: 64, brandFs: 30, tagFs: { en: 68, zh: 62 }, shotW: 430, shotX: 892, dial: 580, rot: 1.6 },
-  { lang: 'zh-cn', out: 'public/og/zh-cn.png', w: 1200, h: 630, icon: 64, brandFs: 30, tagFs: { en: 68, zh: 62 }, shotW: 430, shotX: 892, dial: 580, rot: 1.6 },
-  { lang: 'en', out: 'branding/github-social-preview.png', w: 1280, h: 640, icon: 96, brandFs: 52, tagFs: { en: 56, zh: 52 }, shotW: 430, shotX: 972, dial: 580, rot: 1.6 },
+  ...LOCALES.map((l) => ({ id: l.code, lang: l.code, out: `public/og/${l.code}.png`, w: 1200, h: 630, icon: 64, brandFs: 30, shotW: 430, shotX: 892, dial: 580, rot: 1.6 })),
+  { id: 'github', lang: 'en', out: 'branding/github-social-preview.png', w: 1280, h: 640, icon: 96, brandFs: 52, startFs: 56, shotW: 430, shotX: 972, dial: 580, rot: 1.6 },
 ];
+
+// Which pictures to draw: all, or the ones named on the command line (language codes, or "github").
+const args = process.argv.slice(2);
+const skipGithub = args.includes('--skip-github');
+const named = args.filter((a) => !a.startsWith('--'));
+for (const n of named) if (!IMAGES.some((i) => i.id === n)) throw new Error(`Unknown picture "${n}". Language codes: ${LOCALES.map((l) => l.code).join(', ')}; or "github".`);
+const selected = IMAGES.filter((i) => (named.length ? named.includes(i.id) : true) && !(skipGithub && i.id === 'github'));
 
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
@@ -92,8 +133,8 @@ function dialSvg() {
 function page(img) {
   const L = LANGS[img.lang];
   const hero = { ...en.hero, ...L.dict.hero };
-  const zh = img.lang !== 'en';
-  const tagFs = zh ? img.tagFs.zh : img.tagFs.en;
+  const zh = L.cjk; // Chinese and Japanese: no italic, no negative tracking, a taller line
+  const tagFs = img.startFs ?? L.startFs;
   const dialLeft = img.shotX - img.dial / 2;
   const iconUrl = pathToFileURL(join(root, 'src/assets/aiusageclockicon.png')).href;
   const shotUrl = pathToFileURL(join(root, 'src/assets/windows-1.0.0.png')).href;
@@ -120,6 +161,8 @@ ${L.css.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n')}
   .kicker{font:600 ${zh ? 17 : 15}px/1 ${L.sans};letter-spacing:${zh ? '.14em' : '.2em'};text-transform:uppercase;color:#57534e;margin-bottom:22px}
   h1{font:600 ${tagFs}px/${zh ? 1.2 : 1.02} ${L.serif};letter-spacing:${zh ? 0 : '-.04em'};${zh ? 'font-feature-settings:"halt";' : ''}}
   h1 span,h1 em{display:block;white-space:nowrap}
+  /* set by the fit script below when a tagline line is too long for the column even at the smallest size: wrap it between words (phrases in Japanese) */
+  h1.wrap span,h1.wrap em{white-space:normal;text-wrap:balance;word-break:auto-phrase;overflow-wrap:break-word}
   h1 em{color:#c2410c;${zh ? 'font-style:normal;' : 'font-style:italic;font-weight:500;letter-spacing:-.035em;'}}
   .url{display:flex;align-items:center;gap:14px;font:600 22px/1 ${L.sans};letter-spacing:.01em;color:#44403c}
   .url::before{content:"";width:30px;height:3px;border-radius:2px;background:#ea580c}
@@ -142,6 +185,25 @@ ${L.css.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n')}
     <p class="url">aiusageclock.com</p>
   </div>
   <div class="paper"><img src="${shotUrl}" alt=""></div>
+<script>
+/* Fit the tagline to the left column. It starts at the language's tuned size; a language whose lines are longer
+   (French, German, Japanese) shrinks step by step until each line fits on one line, and below the smallest size the lines wrap.
+   When every line already fits (English, Chinese) nothing changes. If scripts are blocked, the picture is drawn at the starting size. */
+(function () {
+  var START = ${tagFs}, MIN = ${Math.min(L.minFs, tagFs)};
+  var col = document.querySelector('.left'), h1 = document.querySelector('h1'), lines = h1.children;
+  function widest() { var w = 0; for (var i = 0; i < lines.length; i++) w = Math.max(w, lines[i].scrollWidth); return w; }
+  function fit() {
+    h1.classList.remove('wrap');
+    var fs = START;
+    h1.style.fontSize = fs + 'px';
+    while (fs > MIN && widest() > col.clientWidth) { fs -= 2; h1.style.fontSize = fs + 'px'; }
+    if (widest() > col.clientWidth) h1.classList.add('wrap');
+  }
+  fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+})();
+</script>
 </body>
 </html>
 `;
@@ -179,7 +241,7 @@ mkdirSync(work, { recursive: true });
 const edge = findEdge();
 let failed = false;
 
-for (const img of IMAGES) {
+for (const img of selected) {
   const id = img.out.replace(/[\\/]/g, '-').replace(/\.png$/, '');
   const html = join(work, `${id}.html`);
   const raw = join(work, `${id}.raw.png`);

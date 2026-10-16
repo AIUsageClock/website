@@ -94,4 +94,8 @@ const stories = [
   /* Chinese (see global.css): the problem line loses its italic, headings lose the negative tracking. */
   :global(:root:lang(zh)) .prob{font-style:normal;font-size:clamp(1.4rem,2.5vw,2rem);line-height:1.5;letter-spacing:0}
   :global(:root:lang(zh)) .st-text h3,:global(:root:lang(zh)) .also h3{letter-spacing:0;line-height:1.35}
+
+  /* Japanese (see global.css): no italic (kana have none), no negative tracking, more leading. */
+  :global(:root:lang(ja)) .prob{font-style:normal;font-size:clamp(1.3rem,2.4vw,1.85rem);line-height:1.6;letter-spacing:0}
+  :global(:root:lang(ja)) .st-text h3,:global(:root:lang(ja)) .also h3{letter-spacing:0;line-height:1.45}
 </style>

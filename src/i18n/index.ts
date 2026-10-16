@@ -11,6 +11,10 @@
 import { en } from './en';
 import { zhTw } from './zh-tw';
 import { zhCn } from './zh-cn';
+import { ja } from './ja';
+import { es } from './es';
+import { fr } from './fr';
+import { de } from './de';
 import { DEFAULT_LOCALE, getLocale } from './locales';
 
 type Widen<T> = T extends string ? string : T extends readonly (infer U)[] ? Widen<U>[] : { [K in keyof T]: Widen<T[K]> };
@@ -29,6 +33,10 @@ const DICTS: Record<string, DeepPartial<Messages>> = {
   en,
   'zh-tw': zhTw,
   'zh-cn': zhCn,
+  ja,
+  es,
+  fr,
+  de,
 };
 
 type Tree = string | Tree[] | { [key: string]: Tree };
@@ -67,6 +75,20 @@ export function t(code: string): Messages {
 
 export function isComplete(code: string): boolean {
   return covers(en as Tree, DICTS[code]);
+}
+
+/**
+ * True when the language's own dictionary provides this string, e.g. hasKey('ja', 'notFound', 'back').
+ * Lets a page that shows a single string of every language tag it with the language only when it really is in that language,
+ * and with the fallback language (English) when it is not.
+ */
+export function hasKey(code: string, ...path: string[]): boolean {
+  let node: unknown = DICTS[code];
+  for (const key of path) {
+    if (!isRecord(node)) return false;
+    node = node[key];
+  }
+  return typeof node === 'string';
 }
 
 export function htmlLangFor(code: string): string {

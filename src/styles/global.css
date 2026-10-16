@@ -1,5 +1,5 @@
-/* Global tokens, base styles, and the few pieces shared by several components, including the Chinese-page
-   typography (one block near the end). Everything else lives in the component that uses it. */
+/* Global tokens, base styles, and the few pieces shared by several components, including the Chinese, Japanese and
+   European-language typography (blocks near the end). Everything else lives in the component that uses it. */
 
 :root{
   color-scheme:light;
@@ -127,6 +127,36 @@ html:not(.js) .needs-js{display:none}
 :root:lang(zh) .sec-h p.sub{text-wrap:balance}
 /* Small uppercase labels were tuned for Latin at 11.5px; Chinese needs more size and less tracking. */
 :root:lang(zh) .lab{font-size:13px;letter-spacing:.14em}
+
+/* ---------- Japanese page ----------
+   Keys on <html lang="ja">, which only a fully translated Japanese page carries; the same rules as for Chinese apply
+   (rules for one component live in that component's <style>, as :global(:root:lang(ja)) ...). The heading font, Noto Serif JP,
+   is linked by BaseLayout on this page only. Fraunces stays first in the stack, so Latin letters and digits keep their look.
+   Differences from Chinese: kana lines are longer, so headings are set smaller; the body stack names the Japanese system fonts
+   (Hiragino on Apple devices, Yu Gothic UI and Meiryo on Windows) after Inter. */
+:root:lang(ja){
+  --f-serif:"Fraunces Variable","Fraunces","Noto Serif JP Variable","Noto Serif JP","Hiragino Mincho ProN","Yu Mincho","YuMincho","Iowan Old Style",Georgia,serif;
+  --f-sans:"Inter Variable","Inter","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo","Noto Sans JP",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+/* line-break:strict keeps small kana, the prolonged sound mark and closing punctuation off the start of a line. */
+:root:lang(ja){line-break:strict;text-wrap:pretty}
+:root:lang(ja) body{line-height:1.8}
+/* Headings: break between phrases rather than inside them (auto-phrase; a browser without it keeps the default),
+   no negative tracking, "halt" so a trailing 、 or 。 does not push a centred heading off-centre. */
+:root:lang(ja) h1,:root:lang(ja) h2,:root:lang(ja) h3{word-break:auto-phrase}
+:root:lang(ja) .sec-h h2{letter-spacing:0;line-height:1.4;font-feature-settings:"halt"}
+:root:lang(ja) .sec-h p.sub{text-wrap:balance}
+:root:lang(ja) .lab{font-size:13px;letter-spacing:.14em}
+
+/* ---------- European languages (Spanish, French, German) ----------
+   Latin letters with accents (é ñ ü ß œ ç) and the guillemets « » come from the "latin" slices of Fraunces and Inter.
+   Body text hyphenates (it relies on <html lang> naming the language), but buttons and labels never do.
+   A German compound word longer than the line may not fit even when hyphenated (or when the browser has no hyphenation
+   dictionary for the language), so body text and headings may break anywhere as a last resort: overflow-wrap changes
+   nothing unless a word would overflow. Headings get it for every language. */
+:root:lang(es) body,:root:lang(fr) body,:root:lang(de) body{hyphens:auto;overflow-wrap:break-word}
+.btn-ink,.btn-line,.btn-o,.tag,.lab,.when,.kicker,.brand{hyphens:manual}
+h1,h2,h3{overflow-wrap:break-word}
 
 /* ---------- motion ---------- */
 @media (prefers-reduced-motion:no-preference){
