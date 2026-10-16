@@ -1,0 +1,68 @@
+---
+interface Props {
+  /** aria-label while the page is light: what pressing the button does. */
+  toDark: string;
+  /** aria-label while the page is dark. */
+  toLight: string;
+}
+const { toDark, toLight } = Astro.props;
+---
+
+<button class="icon-btn needs-js" id="theme-toggle" type="button" aria-label={toDark} data-to-dark={toDark} data-to-light={toLight}>
+  <svg class="i-moon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.2 14.6A8.4 8.4 0 0 1 9.4 3.8a8.4 8.4 0 1 0 10.8 10.8z"/></svg>
+  <svg class="i-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"/></svg>
+</button>
+
+<script>
+  /* Theme toggle. The page follows the system until the button is pressed; the choice is then saved as `aiuc-theme`.
+     The icon swap is pure CSS (global.css); the early script in BaseLayout applies a saved choice before first paint. */
+  const KEY = 'aiuc-theme';
+  const COLORS = { light: '#f7f4ee', dark: '#1a1714' } as const;
+  type Theme = keyof typeof COLORS;
+
+  const root = document.documentElement;
+  const btn = document.getElementById('theme-toggle');
+  const metas = Array.from(document.querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]'));
+  const mqDark = window.matchMedia('(prefers-color-scheme: dark)');
+  const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let animTimer: number | undefined;
+
+  function explicitTheme(): Theme | null {
+    const s = root.getAttribute('data-theme');
+    return s === 'light' || s === 'dark' ? s : null;
+  }
+  function effective(): Theme {
+    return explicitTheme() ?? (mqDark.matches ? 'dark' : 'light');
+  }
+  function sync() {
+    const t = effective();
+    if (btn) {
+      const label = t === 'dark' ? btn.dataset.toLight : btn.dataset.toDark;
+      if (label) btn.setAttribute('aria-label', label);
+    }
+    /* Two theme-color tags follow the system by their media query. After an explicit choice both carry
+       the chosen colour, so the browser UI matches the page even when the choice differs from the system. */
+    const chosen = explicitTheme();
+    for (const m of metas) {
+      m.content = chosen ? COLORS[chosen] : m.media.includes('dark') ? COLORS.dark : COLORS.light;
+    }
+  }
+
+  btn?.addEventListener('click', () => {
+    const next: Theme = effective() === 'dark' ? 'light' : 'dark';
+    if (!mqReduce.matches) {
+      root.classList.add('theme-anim');
+      window.clearTimeout(animTimer);
+      animTimer = window.setTimeout(() => root.classList.remove('theme-anim'), 450);
+    }
+    root.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem(KEY, next);
+    } catch {
+      /* storage unavailable: the choice lasts until the page closes */
+    }
+    sync();
+  });
+  mqDark.addEventListener('change', sync);
+  sync();
+</script>

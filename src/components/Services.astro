@@ -1,0 +1,52 @@
+---
+import type { Messages } from '../i18n';
+
+interface Props {
+  m: Messages['services'];
+}
+const { m } = Astro.props;
+
+/** Display order of the services. */
+const order = ['claude', 'codex', 'antigravity', 'opencode', 'copilot', 'openrouter'] as const;
+---
+
+<section class="sec" id="services" aria-labelledby="svc-title">
+  <div class="wrap-b narrow">
+    <header class="sec-h">
+      <p class="lab">{m.label}</p>
+      <h2 id="svc-title">{m.heading}</h2>
+    </header>
+    <ul class="tt">
+      {
+        order.map((key) => (
+          <li>
+            <div class="tt-l">
+              <span class="nm">{m.items[key].name}</span>
+              <span class="dots" aria-hidden="true" />
+              <span class="what">{m.items[key].what}</span>
+            </div>
+            <p class="how" set:html={m.items[key].howHtml} />
+          </li>
+        ))
+      }
+    </ul>
+    <p class="tt-note" set:html={m.noteHtml} />
+  </div>
+</section>
+
+<style>
+  .tt li{padding:20px 0;border-bottom:1px solid var(--rule)}
+  .tt li:first-child{border-top:2px solid var(--rule-strong)}
+  .tt-l{display:flex;align-items:flex-end;gap:12px}
+  .nm{font:600 clamp(1.3rem,2.4vw,1.7rem)/1.1 var(--f-serif);letter-spacing:-.015em;white-space:nowrap}
+  .dots{flex:1;min-width:16px;border-bottom:2px dotted var(--dots);margin-bottom:.4em}
+  .what{font:500 .98rem/1.2 var(--f-sans);letter-spacing:.02em;white-space:nowrap;padding-bottom:.1em}
+  .how{margin-top:8px;font-size:.93rem;line-height:1.5;color:var(--mute);max-width:56ch}
+  .tt-note{margin-top:28px;font-size:.98rem;color:var(--ink-2);text-align:center;text-wrap:pretty}
+
+  @media (max-width:560px){
+    .tt-l{flex-wrap:wrap;row-gap:2px}
+    .tt-l .dots{display:none}
+    .tt-l .what{margin-left:auto;white-space:normal;text-align:right}
+  }
+</style>

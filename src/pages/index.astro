@@ -1,0 +1,72 @@
+---
+// Root "/": picks a language and redirects. It is a real page so that crawlers, and visitors without JavaScript, see links.
+import { Image } from 'astro:assets';
+import icon from '../assets/aiusageclockicon.png';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { LOCALES } from '../i18n/locales';
+import { t } from '../i18n';
+import { SITE_NAME } from '../site';
+
+const m = t('en');
+const codes = LOCALES.map((l) => l.code);
+---
+
+<BaseLayout title={m.root.title} description={m.meta.description} htmlLang="en" canonicalPath="/" alternatePath="">
+  <Fragment slot="head">
+    <noscript><meta http-equiv="refresh" content="0;url=/en/" /></noscript>
+    <script is:inline data-codes={codes.join(',')}>
+      /* Where to go, in order: 1) the language saved by the language menu (aiuc-lang),
+         2) the browser's language list: the first entry the site can serve wins,
+            Traditional Chinese (zh-TW, zh-HK, zh-MO, Hant) -> zh-tw, Simplified or plain zh -> zh-cn, English -> en,
+         3) English. */
+      (function () {
+        var codes = (document.currentScript && document.currentScript.getAttribute('data-codes') || 'en').split(',');
+        function known(code) { return codes.indexOf(code) !== -1; }
+        function go(code) { location.replace('/' + code + '/'); }
+        function pick(tag) {
+          var p = String(tag || '').toLowerCase().split(/[-_]/);
+          if (p[0] === 'en') return 'en';
+          if (p[0] !== 'zh') return null;
+          if (p.indexOf('hant') !== -1) return 'zh-tw';
+          if (p.indexOf('hans') !== -1) return 'zh-cn';
+          if (p.indexOf('tw') !== -1 || p.indexOf('hk') !== -1 || p.indexOf('mo') !== -1) return 'zh-tw';
+          return 'zh-cn';
+        }
+        var saved = null;
+        try { saved = localStorage.getItem('aiuc-lang'); } catch (e) { saved = null; }
+        if (saved && known(saved)) { go(saved); return; }
+        var tags = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || ''];
+        for (var i = 0; i < tags.length; i++) {
+          var code = pick(tags[i]);
+          if (code && known(code)) { go(code); return; }
+        }
+        go('en');
+      })();
+    </script>
+  </Fragment>
+
+  <main class="pick wrap-b narrow" id="main">
+    <Image src={icon} width={216} height={216} format="png" alt="" loading="eager" />
+    <h1>{SITE_NAME}</h1>
+    <p class="lab">{m.root.choose}</p>
+    <ul>
+      {
+        LOCALES.map((l) => (
+          <li>
+            <a class="btn-line" href={`/${l.code}/`} lang={l.htmlLang} hreflang={l.hreflang}>
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </main>
+</BaseLayout>
+
+<style>
+  .pick{display:flex;flex-direction:column;align-items:center;text-align:center;padding-block:clamp(72px,16vw,160px)}
+  .pick :global(img){width:72px;height:72px}
+  .pick h1{margin-top:20px;font:600 clamp(2rem,6vw,3.2rem)/1.05 var(--f-serif);letter-spacing:-.03em}
+  .pick .lab{margin-top:28px}
+  .pick ul{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:20px}
+</style>

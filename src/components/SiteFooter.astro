@@ -1,0 +1,46 @@
+---
+import { Image } from 'astro:assets';
+import icon from '../assets/aiusageclockicon.png';
+import { LINKS, SITE_NAME } from '../site';
+import type { Messages } from '../i18n';
+
+interface Props {
+  m: Messages['footer'];
+  brandHref?: string;
+}
+const { m, brandHref = '#top' } = Astro.props;
+
+const links = [
+  { href: LINKS.repo, label: m.links.github },
+  { href: LINKS.releases, label: m.links.download },
+  { href: LINKS.setup, label: m.links.setup },
+  { href: LINKS.usage, label: m.links.usage },
+  { href: LINKS.mcp, label: m.links.mcp },
+  { href: LINKS.changelog, label: m.links.changelog },
+  { href: LINKS.license, label: m.links.license },
+];
+---
+
+<footer class="foot">
+  <div class="wrap-b">
+    <a class="brand" href={brandHref}>
+      <Image src={icon} width={108} height={108} format="png" alt="" />
+      <span>{SITE_NAME}</span>
+    </a>
+    <p>{m.tagline}</p>
+    <ul>
+      {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+    </ul>
+    <p>{m.disclaimer}</p>
+    <p>{m.version}</p>
+  </div>
+</footer>
+
+<style>
+  .foot{border-top:1px solid var(--rule);padding:48px 0 56px;text-align:center}
+  .foot .brand{justify-content:center;margin-bottom:6px}
+  .foot ul{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 24px;margin:24px 0}
+  .foot ul a{color:var(--ink);font-size:.95rem}
+  .foot p{color:var(--mute);font-size:.9rem;max-width:62ch;margin:0 auto}
+  .foot p + p{margin-top:10px}
+</style>

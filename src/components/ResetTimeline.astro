@@ -1,0 +1,71 @@
+---
+import type { Messages } from '../i18n';
+
+interface Props {
+  m: Messages['resets'];
+}
+const { m } = Astro.props;
+
+/**
+ * The three moments, in time order, and their colour: o = orange (announced), g = green (reset), k = ink (nothing announced).
+ * The order is real: it follows when each moment happens around a reset.
+ */
+const moments = [
+  { key: 'announced', kind: 'o' },
+  { key: 'reset', kind: 'g' },
+  { key: 'silent', kind: 'k' },
+] as const;
+---
+
+<section class="sec" id="resets" aria-labelledby="resets-title">
+  <div class="wrap-b narrow">
+    <header class="sec-h">
+      <p class="lab">{m.label}</p>
+      <h2 id="resets-title">{m.heading}</h2>
+      <p class="sub">{m.sub}</p>
+    </header>
+    <ol class="tl">
+      {
+        moments.map(({ key, kind }) => {
+          const item = m.items[key];
+          return (
+            <li>
+              <span class:list={['mk', kind]} aria-hidden="true" />
+              <p class="when">{item.when}</p>
+              <h3>
+                {item.tag && <span class:list={['tag', kind]}>{item.tag}</span>}
+                {item.heading}
+              </h3>
+              <p class="body">{item.body}</p>
+            </li>
+          );
+        })
+      }
+    </ol>
+    <p class="caveat" set:html={m.caveatHtml} />
+  </div>
+</section>
+
+<style>
+  .tl{position:relative;padding-left:56px}
+  .tl::before{content:"";position:absolute;left:13px;top:10px;bottom:10px;width:2px;background:var(--rule)}
+  .tl li{position:relative;padding-bottom:clamp(32px,5vw,48px)}
+  .tl li:last-child{padding-bottom:0}
+  .mk{position:absolute;left:-56px;top:2px;width:28px;height:28px;border-radius:50%;background:var(--paper);border:2px solid var(--c);display:grid;place-items:center}
+  .mk::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--c)}
+  .mk.o{--c:var(--orange)}.mk.g{--c:var(--green-fill)}.mk.k{--c:var(--ink)}
+  .when{font:600 11.5px/1 var(--f-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin-top:9px}
+  .tl h3{margin-top:12px;font:600 clamp(1.4rem,2.4vw,1.85rem)/1.15 var(--f-serif);letter-spacing:-.02em;text-wrap:balance}
+  .tl p.body{margin-top:10px;color:var(--ink-2);font-size:1.04rem;max-width:40em}
+  .tag{display:inline-block;font:600 12.5px/1 var(--f-sans);letter-spacing:.04em;padding:6px 11px;border-radius:99px;border:1.5px solid var(--c);color:var(--ink);margin-right:8px;vertical-align:.2em}
+  .tag.o{--c:var(--orange)}.tag.g{--c:var(--green-fill);color:var(--green)}.tag.k{--c:var(--ink)}
+  .caveat{margin-top:clamp(36px,5vw,56px);padding:22px 26px;border:1.5px solid var(--rule-strong);border-radius:4px;font-size:.98rem;color:var(--ink-2);text-wrap:pretty}
+  .caveat :global(strong){color:var(--ink)}
+
+  @media (max-width:560px){
+    .tl{padding-left:46px}
+    .tl::before{left:11px}
+    .mk{left:-46px;width:24px;height:24px}
+    .mk::after{width:8px;height:8px}
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+import { Image } from 'astro:assets';
+import icon from '../assets/aiusageclockicon.png';
+import LanguageMenu from './LanguageMenu.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import { LINKS, SITE_NAME } from '../site';
+import type { Messages } from '../i18n';
+
+interface Props {
+  /** Locale code of the page, used to tick the current language. */
+  lang: string;
+  m: Messages;
+  /** Path of this page under the locale prefix ('' for the home page); the language menu links to the same page. */
+  path?: string;
+  brandHref?: string;
+}
+const { lang, m, path = '', brandHref = '#top' } = Astro.props;
+---
+
+<header>
+  <div class="wrap-b top-in">
+    <a class="brand" href={brandHref}>
+      <Image src={icon} width={108} height={108} format="png" alt="" loading="eager" />
+      <span>{SITE_NAME}</span>
+    </a>
+    <div class="top-r">
+      <LanguageMenu current={lang} path={path} label={m.a11y.language} />
+      <ThemeToggle toDark={m.a11y.switchToDark} toLight={m.a11y.switchToLight} />
+      <a class="btn-ink sm" href={LINKS.releases}>{m.header.download}</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .top-in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:20px}
+  .top-r{display:flex;align-items:center;gap:10px}
+
+  @media (max-width:519px){
+    /* keep logo, language, theme and Download on one row: logo text stays available to screen readers */
+    .top-in .brand span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  }
+</style>

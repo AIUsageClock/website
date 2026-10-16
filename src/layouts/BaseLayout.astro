@@ -1,0 +1,78 @@
+---
+// Fonts are self-hosted from the Fontsource packages: Vite copies the .woff2 files into dist/_astro,
+// so the page never contacts Google Fonts or any other font host.
+// Fraunces uses the opsz (optical size) axis in roman and italic; Inter only needs weight.
+import '@fontsource-variable/fraunces/opsz.css';
+import '@fontsource-variable/fraunces/opsz-italic.css';
+import '@fontsource-variable/inter/wght.css';
+import '../styles/global.css';
+import { LOCALES } from '../i18n/locales';
+import { SITE_NAME } from '../site';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Value for <html lang>. */
+  htmlLang: string;
+  noindex?: boolean;
+  /** Path of this page, e.g. "/en/". Sets canonical and og:url. Leave out for pages that should have neither. */
+  canonicalPath?: string;
+  /** Path of this page under each locale prefix ("" for the home page). Sets the hreflang alternates plus x-default. */
+  alternatePath?: string;
+}
+
+const { title, description, htmlLang, noindex = false, canonicalPath, alternatePath } = Astro.props;
+
+const canonical = canonicalPath === undefined ? undefined : new URL(canonicalPath, Astro.site).href;
+const alternates =
+  alternatePath === undefined
+    ? []
+    : [
+        ...LOCALES.map((l) => ({
+          hreflang: l.hreflang,
+          href: new URL(`/${l.code}/${alternatePath}`, Astro.site).href,
+        })),
+        { hreflang: 'x-default', href: new URL('/', Astro.site).href },
+      ];
+---
+
+<!doctype html>
+<html lang={htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    {alternates.map((a) => <link rel="alternate" hreflang={a.hreflang} href={a.href} />)}
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_NAME} />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1714" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline>
+      /* Runs before the page is painted: mark the page as JS-capable and apply a saved theme choice (if any),
+         so the page never flashes the wrong theme. Without a saved choice the CSS follows the system. */
+      (function () {
+        var d = document, r = d.documentElement, t = null;
+        r.classList.add('js');
+        try { t = localStorage.getItem('aiuc-theme'); } catch (e) { t = null; }
+        if (t === 'light' || t === 'dark') {
+          r.setAttribute('data-theme', t);
+          var ms = d.querySelectorAll('meta[name="theme-color"]');
+          for (var i = 0; i < ms.length; i++) ms[i].setAttribute('content', t === 'dark' ? '#1a1714' : '#f7f4ee');
+        }
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

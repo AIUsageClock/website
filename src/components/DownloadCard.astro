@@ -1,0 +1,52 @@
+---
+import { Image } from 'astro:assets';
+import icon from '../assets/aiusageclockicon.png';
+import { LINKS } from '../site';
+import type { Messages } from '../i18n';
+
+interface Props {
+  m: Messages['download'];
+}
+const { m } = Astro.props;
+---
+
+<section class="dl" id="download" aria-labelledby="dl-title">
+  <div class="wrap-b">
+    <div class="dl-card">
+      <div>
+        <h2 id="dl-title">{m.heading}</h2>
+        <p>{m.body}</p>
+        <div class="dl-cta">
+          <a class="btn-o" href={LINKS.releases}>{m.download}</a>
+          <a class="btn-line" href={LINKS.repo}>{m.github}</a>
+        </div>
+        <p class="small" set:html={m.smallHtml} />
+      </div>
+      <Image class="dl-icon" src={icon} width={400} height={400} format="png" alt={m.iconAlt} />
+    </div>
+  </div>
+</section>
+
+<style>
+  .dl{padding-bottom:clamp(56px,8vw,96px)}
+  .dl-card{background:var(--card-bg);color:var(--card-fg);border-radius:6px;padding:clamp(32px,6vw,72px);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(24px,5vw,64px);align-items:center;position:relative;overflow:hidden}
+  .dl-card h2{font:600 clamp(2rem,4.4vw,3.3rem)/1.02 var(--f-serif);letter-spacing:-.03em;text-wrap:balance}
+  .dl-card p{margin-top:16px;color:var(--card-fg-2);max-width:36em}
+  .dl-card .dl-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+  .dl-card .btn-o{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 26px;border-radius:99px;background:var(--btn-o-bg);color:var(--btn-o-fg);font:600 16px/1 var(--f-sans);text-decoration:none;border:2px solid var(--btn-o-bg);transition:background-color .2s,border-color .2s}
+  .dl-card .btn-o:hover{background:var(--btn-o-hover);border-color:var(--btn-o-hover);text-decoration:none}
+  .dl-card .btn-line{color:var(--card-fg);min-height:48px}
+  .dl-card .btn-line:hover{background:var(--card-fg);color:var(--card-bg)}
+  .dl-card .small{margin-top:22px;font-size:.88rem;color:var(--card-fg-2)}
+  .dl-card .small :global(a){color:var(--card-link)}
+  /* <Image> renders the <img>, so this rule reaches it through :global */
+  .dl-card :global(.dl-icon){width:clamp(110px,16vw,200px);height:auto;filter:drop-shadow(0 18px 28px var(--icon-shadow))}
+
+  @media (max-width:860px){
+    .dl-card{grid-template-columns:minmax(0,1fr)}
+    .dl-card :global(.dl-icon){order:-1;width:96px}
+  }
+  @media (max-width:560px){
+    .dl-card .btn-o,.dl-card .btn-line{flex:1 1 100%}
+  }
+</style>

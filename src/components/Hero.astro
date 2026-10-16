@@ -1,0 +1,50 @@
+---
+import Dial from './Dial.astro';
+import { LINKS } from '../site';
+import type { Messages } from '../i18n';
+
+interface Props {
+  m: Messages['hero'];
+}
+const { m } = Astro.props;
+---
+
+<section class="hero" id="top" aria-labelledby="hero-title">
+  <Dial />
+  <div class="wrap-b hero-in">
+    <p class="kicker">{m.kicker}</p>
+    <h1 id="hero-title"><span>{m.line1}</span><em>{m.line2}</em></h1>
+    <p class="lede">{m.lede}</p>
+    <div class="cta">
+      <a class="btn-ink" href={LINKS.releases}>{m.download}</a>
+      <a class="gh" href={LINKS.repo}>{m.github}</a>
+    </div>
+    <p class="fine">{m.fine}</p>
+  </div>
+</section>
+
+<style>
+  .hero{position:relative;overflow:hidden;text-align:center;padding:clamp(56px,10vw,128px) 0 clamp(72px,11vw,140px)}
+  .hero-in{position:relative;z-index:1}
+  .kicker{font:600 12.5px/1 var(--f-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin-bottom:clamp(20px,3vw,32px)}
+  .hero h1{font:600 clamp(2.9rem,8.4vw,7.4rem)/.96 var(--f-serif);letter-spacing:-.04em;text-wrap:balance}
+  .hero h1 span{display:block}
+  .hero h1 em{display:block;font-style:italic;font-weight:500;color:var(--orange-ink);letter-spacing:-.035em}
+  .lede{max-width:36em;margin:clamp(24px,3.5vw,40px) auto 0;font-size:clamp(1.05rem,1.6vw,1.28rem);color:var(--ink-2);text-wrap:pretty}
+  .cta{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:14px 26px;margin-top:clamp(28px,4vw,44px)}
+  .cta .gh{font-weight:600;color:var(--ink);text-underline-offset:.3em;text-decoration-color:var(--orange);text-decoration-thickness:2px}
+  .fine{margin-top:22px;font-size:13.5px;color:var(--mute);letter-spacing:.02em}
+
+  @media (prefers-reduced-motion:no-preference){
+    .hero-in > *{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+    .hero-in > :nth-child(2){animation-delay:.08s}
+    .hero-in > :nth-child(3){animation-delay:.18s}
+    .hero-in > :nth-child(4){animation-delay:.28s}
+    .hero-in > :nth-child(5){animation-delay:.36s}
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  @media (max-width:560px){
+    .cta .btn-ink{flex:1 1 100%}
+  }
+</style>

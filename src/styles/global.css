@@ -1,0 +1,113 @@
+/* Global tokens, base styles, and the few pieces shared by several components.
+   Everything else lives in the component that uses it. */
+
+:root{
+  color-scheme:light;
+  /* surfaces and text */
+  --paper:#f7f4ee; --ink:#1c1917; --ink-2:#44403c; --mute:#57534e;
+  --rule:#d9d3c7; --rule-strong:#1c1917; --btn-edge:#8c857b; --dots:#8a8378;
+  /* accents: --orange for graphics and fills, --orange-ink for text */
+  --orange:#ea580c; --orange-ink:#c2410c; --on-orange:#1c1917;
+  --green:#166534; --green-fill:#16a34a;
+  /* printed screenshots, code, dial */
+  --mat:#fffdf8; --mat-edge:transparent; --shot-edge:transparent;
+  --paper-shadow:0 1px 0 rgba(28,25,23,.05),0 2px 6px rgba(28,25,23,.08),0 26px 50px -22px rgba(28,25,23,.42);
+  --code-bg:rgba(28,25,23,.07); --dial-k:1;
+  /* download card and floating bits */
+  --card-bg:#1c1917; --card-fg:#f7f4ee; --card-fg-2:#d6d3d1; --card-link:#fdba74;
+  --btn-o-bg:#ea580c; --btn-o-fg:#1c1917; --btn-o-hover:#fb923c;
+  --float-shadow:0 8px 24px rgba(28,25,23,.3); --icon-shadow:rgba(0,0,0,.55);
+  --f-serif:"Fraunces Variable","Fraunces","Iowan Old Style","Palatino Linotype",Georgia,serif;
+  --f-sans:"Inter Variable","Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --wrap:1180px;
+  --gutter:clamp(18px,5vw,40px);
+}
+/* Dark theme: warm near-black, paper-coloured type. The two blocks below must stay identical:
+   the 1st block is the explicit choice, the 2nd follows the system when no choice is saved. */
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#1a1714; --ink:#f2ede4; --ink-2:#d6cfc3; --mute:#a8a094;
+  --rule:#38332c; --rule-strong:#7d7466; --btn-edge:#8a8174; --dots:#6f685d;
+  --orange:#f97316; --orange-ink:#fb923c; --on-orange:#1a1714;
+  --green:#4ade80; --green-fill:#22c55e;
+  --mat:#26221e; --mat-edge:#3d372f; --shot-edge:rgba(242,237,228,.22);
+  --paper-shadow:0 1px 0 rgba(255,255,255,.04),0 2px 6px rgba(0,0,0,.45),0 26px 50px -22px rgba(0,0,0,.85);
+  --code-bg:rgba(242,237,228,.1); --dial-k:.7;
+  --card-bg:#f2ede4; --card-fg:#1a1714; --card-fg-2:#44403c; --card-link:#9a3412;
+  --btn-o-bg:#c2410c; --btn-o-fg:#fff7ed; --btn-o-hover:#9a3412;
+  --float-shadow:0 8px 24px rgba(0,0,0,.6); --icon-shadow:rgba(28,25,23,.45);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#1a1714; --ink:#f2ede4; --ink-2:#d6cfc3; --mute:#a8a094;
+    --rule:#38332c; --rule-strong:#7d7466; --btn-edge:#8a8174; --dots:#6f685d;
+    --orange:#f97316; --orange-ink:#fb923c; --on-orange:#1a1714;
+    --green:#4ade80; --green-fill:#22c55e;
+    --mat:#26221e; --mat-edge:#3d372f; --shot-edge:rgba(242,237,228,.22);
+    --paper-shadow:0 1px 0 rgba(255,255,255,.04),0 2px 6px rgba(0,0,0,.45),0 26px 50px -22px rgba(0,0,0,.85);
+    --code-bg:rgba(242,237,228,.1); --dial-k:.7;
+    --card-bg:#f2ede4; --card-fg:#1a1714; --card-fg-2:#44403c; --card-link:#9a3412;
+    --btn-o-bg:#c2410c; --btn-o-fg:#fff7ed; --btn-o-hover:#9a3412;
+    --float-shadow:0 8px 24px rgba(0,0,0,.6); --icon-shadow:rgba(28,25,23,.45);
+  }
+}
+
+/* ---------- base ---------- */
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.65 var(--f-sans);overflow-x:clip;-webkit-font-smoothing:antialiased}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--orange-ink);text-underline-offset:.22em;text-decoration-thickness:1px}
+a:hover{text-decoration-thickness:2px}
+h1,h2,h3,p,ul,ol,figure,dl,dd{margin:0}
+ul,ol{padding:0;list-style:none}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:3px}
+code{font:500 .86em ui-monospace,"Cascadia Mono",Consolas,monospace;background:var(--code-bg);padding:.12em .42em;border-radius:5px;overflow-wrap:anywhere}
+
+/* ---------- shared layout ---------- */
+.wrap-b{width:100%;max-width:calc(var(--wrap) + var(--gutter)*2);margin-inline:auto;padding-inline:var(--gutter)}
+.narrow{max-width:calc(760px + var(--gutter)*2)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;background:var(--ink);color:var(--paper);padding:10px 14px;border-radius:6px;z-index:100;font-weight:600}
+.skip:focus{top:12px}
+.lab{font:600 11.5px/1 var(--f-sans);letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
+.sec{padding-block:clamp(64px,10vw,120px);border-top:1px solid var(--rule)}
+.sec-h{text-align:center;max-width:720px;margin:0 auto clamp(36px,6vw,64px)}
+.sec-h h2{font:600 clamp(2rem,4.6vw,3.4rem)/1.04 var(--f-serif);letter-spacing:-.03em;text-wrap:balance;margin-top:16px}
+.sec-h p.sub{margin-top:16px;color:var(--ink-2);font-size:1.08rem;text-wrap:pretty}
+
+/* ---------- brand, buttons ---------- */
+.brand{display:flex;align-items:center;gap:10px;color:var(--ink);text-decoration:none;font:600 20px/1 var(--f-serif);letter-spacing:-.01em}
+.brand img{width:36px;height:36px;flex:none}
+.btn-ink{display:inline-flex;align-items:center;justify-content:center;gap:.55em;min-height:44px;padding:0 22px;border-radius:99px;background:var(--ink);color:var(--paper);font:600 15px/1 var(--f-sans);text-decoration:none;border:2px solid var(--ink);transition:background-color .2s,color .2s,border-color .2s}
+.btn-ink:hover{background:var(--orange);border-color:var(--orange);color:var(--on-orange);text-decoration:none}
+.btn-ink.sm{min-height:40px;padding:0 18px;font-size:14px}
+.btn-line{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:99px;border:2px solid currentColor;font:600 15px/1 var(--f-sans);text-decoration:none;color:var(--ink);transition:background-color .2s,color .2s}
+.btn-line:hover{background:var(--ink);color:var(--paper);text-decoration:none}
+
+/* ---------- header controls (language menu and theme toggle share the round button) ---------- */
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:none;width:40px;height:40px;padding:0;border-radius:99px;border:1.5px solid var(--btn-edge);background:transparent;color:var(--ink);cursor:pointer;font:inherit;transition:background-color .2s,border-color .2s,color .2s}
+.icon-btn:hover{border-color:var(--ink);background:var(--code-bg)}
+.icon-btn svg{flex:none}
+/* Theme icons: light shows the moon, dark shows the sun. Specificity: base (0,2,0) < dark rules (0,4,0). */
+.icon-btn .i-moon{display:block}
+.icon-btn .i-sun{display:none}
+:root[data-theme="dark"] .icon-btn .i-sun{display:block}
+:root[data-theme="dark"] .icon-btn .i-moon{display:none}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]) .icon-btn .i-sun{display:block}
+  :root:not([data-theme="light"]) .icon-btn .i-moon{display:none}
+}
+/* Controls that do nothing without JavaScript are hidden until the early script marks the page as .js */
+html:not(.js) .needs-js{display:none}
+
+/* ---------- motion ---------- */
+@media (prefers-reduced-motion:no-preference){
+  /* short cross-fade while the theme switches (class is added by the toggle script for ~0.45s) */
+  html.theme-anim,html.theme-anim *,html.theme-anim *::before,html.theme-anim *::after{transition:background-color .35s ease,color .35s ease,border-color .35s ease,box-shadow .35s ease,fill .35s ease,stroke .35s ease !important}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{transition-duration:.001ms !important}
+}

@@ -1,0 +1,93 @@
+---
+import { Image } from 'astro:assets';
+import shotOverview from '../assets/win-panel-full.png';
+import shotResets from '../assets/windows-1.0.0.png';
+import shotCompact from '../assets/win-panel-compact.png';
+import type { Messages } from '../i18n';
+
+interface Props {
+  m: Messages['stories'];
+}
+const { m } = Astro.props;
+
+/** Story order, and the screenshot that goes with each. `crop` shows only the two reset tiles of that capture. */
+const stories = [
+  { key: 'overview', src: shotOverview, width: 880, height: 722, crop: false },
+  { key: 'resets', src: shotResets, width: 678, height: 680, crop: true },
+  { key: 'compact', src: shotCompact, width: 880, height: 162, crop: false },
+] as const;
+---
+
+<div class="wrap-b">
+  <h2 class="sr">{m.heading}</h2>
+
+  {
+    stories.map((shot, i) => {
+      const s = m.items[shot.key];
+      return (
+        <article class:list={['story', { rev: i % 2 === 1 }]}>
+          <div class="st-text">
+            <p class="lab">{m.problemLabel}</p>
+            <p class="prob">{s.problem}</p>
+            <p class="lab fix">{m.fixLabel}</p>
+            <h3>{s.heading}</h3>
+            <p class="body">{s.body}</p>
+          </div>
+          <figure class="paper">
+            {shot.crop ? (
+              <div class="crop">
+                <Image src={shot.src} width={shot.width} height={shot.height} format="png" alt={s.alt} />
+              </div>
+            ) : (
+              <Image src={shot.src} width={shot.width} height={shot.height} format="png" alt={s.alt} />
+            )}
+            <figcaption>{s.caption}</figcaption>
+          </figure>
+        </article>
+      );
+    })
+  }
+
+  <div class="also">
+    <div>
+      <h3>{m.also.notify.heading}</h3>
+      <p>{m.also.notify.body}</p>
+    </div>
+    <div>
+      <h3>{m.also.local.heading}</h3>
+      <p>{m.also.local.body}</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .story{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.12fr);gap:clamp(32px,6vw,96px);align-items:center;padding-block:clamp(48px,8vw,96px)}
+  .story + .story{border-top:1px solid var(--rule)}
+  .story.rev .st-text{order:2}
+  .lab.fix{color:var(--orange-ink);margin-top:clamp(22px,3vw,32px)}
+  .prob{margin-top:14px;font:italic 400 clamp(1.5rem,2.7vw,2.25rem)/1.2 var(--f-serif);letter-spacing:-.015em;color:var(--ink-2);text-wrap:balance}
+  .st-text h3{margin-top:12px;font:600 clamp(1.5rem,2.5vw,2rem)/1.15 var(--f-serif);letter-spacing:-.02em;text-wrap:balance}
+  .st-text p.body{margin-top:14px;color:var(--ink-2);font-size:1.04rem;max-width:34em}
+  .paper{background:var(--mat);border:1px solid var(--mat-edge);padding:12px 12px 14px;border-radius:3px;box-shadow:var(--paper-shadow);transform:rotate(-.7deg);justify-self:center;width:100%;max-width:600px}
+  .story.rev .paper{transform:rotate(.7deg)}
+  /* <Image> renders the <img>, so these rules reach it through :global */
+  .paper :global(img){width:100%;border-radius:1px;box-shadow:0 0 0 1px var(--shot-edge)}
+  .paper figcaption{padding:12px 4px 0;font-size:13px;line-height:1.45;color:var(--mute)}
+  .crop{position:relative;overflow:hidden;aspect-ratio:678/172;background:#0f172a;box-shadow:0 0 0 1px var(--shot-edge)}
+  .crop :global(img){position:absolute;left:0;top:-272.1%;width:100%;max-width:none;box-shadow:none}
+  .also{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--rule);padding-block:clamp(40px,6vw,72px)}
+  .also > div{padding-inline:clamp(0px,3vw,48px)}
+  .also > div:first-child{padding-left:0;border-right:1px solid var(--rule)}
+  .also > div:last-child{padding-right:0}
+  .also h3{font:600 clamp(1.3rem,2vw,1.6rem)/1.2 var(--f-serif);letter-spacing:-.015em;margin-bottom:12px}
+  .also p{color:var(--ink-2);font-size:1.02rem}
+
+  @media (max-width:860px){
+    .story{grid-template-columns:minmax(0,1fr)}
+    .story.rev .st-text{order:0}
+    .paper,.story.rev .paper{max-width:560px;transform:none}
+    .also{grid-template-columns:minmax(0,1fr);gap:36px}
+    .also > div,.also > div:first-child,.also > div:last-child{padding-inline:0;border-right:0}
+    .also > div:first-child{padding-bottom:36px;border-bottom:1px solid var(--rule)}
+  }
+</style>

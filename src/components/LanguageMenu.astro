@@ -1,0 +1,138 @@
+---
+import { LOCALES } from '../i18n/locales';
+
+interface Props {
+  /** Locale code of the current page. */
+  current: string;
+  /** Path of this page under the locale prefix ('' for the home page). */
+  path?: string;
+  /** Accessible name of the button and the menu. */
+  label: string;
+}
+const { current, path = '', label } = Astro.props;
+---
+
+<div class="lang-menu needs-js" id="lang-menu">
+  <button class="icon-btn lang-btn" id="lang-btn" type="button" aria-label={label} aria-haspopup="true" aria-expanded="false" aria-controls="lang-list">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.6 4 5.7 4 9s-1.4 6.4-4 9c-2.6-2.6-4-5.7-4-9s1.4-6.4 4-9z"/></svg>
+    <svg class="caret" viewBox="0 0 10 6" width="10" height="6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M1 1l4 4 4-4"/></svg>
+  </button>
+  <ul class="lang-list" id="lang-list" role="menu" aria-label={label} hidden>
+    {
+      LOCALES.map((l) => {
+        const on = l.code === current;
+        return (
+          <li role="none">
+            <a
+              href={`/${l.code}/${path}`}
+              role="menuitemradio"
+              lang={l.htmlLang}
+              hreflang={l.hreflang}
+              data-code={l.code}
+              aria-checked={on ? 'true' : 'false'}
+              aria-current={on ? 'true' : undefined}
+            >
+              <span class="ck" aria-hidden="true">{on ? '✓' : ''}</span>
+              <span>{l.label}</span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ul>
+</div>
+
+<style>
+  .lang-menu{position:relative}
+  .icon-btn.lang-btn{width:auto;padding:0 12px}
+  .lang-btn .caret{transition:transform .2s}
+  .lang-btn[aria-expanded="true"] .caret{transform:rotate(180deg)}
+  .lang-list{position:absolute;right:0;top:calc(100% + 8px);z-index:70;min-width:184px;max-width:calc(100vw - 2*var(--gutter));max-height:min(60vh,320px);overflow-y:auto;margin:0;padding:6px;background:var(--mat);border:1px solid var(--rule);border-radius:8px;box-shadow:var(--paper-shadow)}
+  .lang-list[hidden]{display:none}
+  .lang-list a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;color:var(--ink);text-decoration:none;font:500 15px/1.2 var(--f-sans)}
+  .lang-list a:hover{background:var(--code-bg)}
+  .lang-list a:focus-visible{outline-offset:-2px}
+  .lang-list a[aria-current]{font-weight:600}
+  .lang-list .ck{width:1em;flex:none;color:var(--orange-ink);font-weight:700;text-align:center}
+</style>
+
+<script>
+  /* Language menu: opens from the globe button, arrow keys move between items, Esc closes.
+     Choosing a language remembers it (the root page reads it) and follows the link to the same page in that language. */
+  const KEY = 'aiuc-lang';
+  const menu = document.getElementById('lang-menu');
+  const btn = document.getElementById('lang-btn');
+  const list = document.getElementById('lang-list');
+
+  if (menu && btn && list) {
+    const items = (): HTMLAnchorElement[] => Array.from(list.querySelectorAll<HTMLAnchorElement>('a'));
+
+    const openMenu = (focusFirst: boolean) => {
+      list.hidden = false;
+      btn.setAttribute('aria-expanded', 'true');
+      if (focusFirst) items()[0]?.focus();
+    };
+    const closeMenu = (returnFocus: boolean) => {
+      if (list.hidden) return;
+      list.hidden = true;
+      btn.setAttribute('aria-expanded', 'false');
+      if (returnFocus) btn.focus();
+    };
+
+    btn.addEventListener('click', () => {
+      if (list.hidden) openMenu(false);
+      else closeMenu(false);
+    });
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        openMenu(true);
+      }
+    });
+    list.addEventListener('keydown', (e) => {
+      const it = items();
+      if (!it.length) return;
+      const i = it.indexOf(document.activeElement as HTMLAnchorElement);
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        it[(i + 1) % it.length]?.focus();
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        it[(i - 1 + it.length) % it.length]?.focus();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        it[0]?.focus();
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        it[it.length - 1]?.focus();
+      }
+    });
+    list.addEventListener('click', (e) => {
+      const a = (e.target as Element | null)?.closest<HTMLAnchorElement>('a');
+      if (!a) return;
+      const code = a.dataset.code;
+      if (code) {
+        try {
+          localStorage.setItem(KEY, code);
+        } catch {
+          /* storage unavailable: the choice still works for this visit */
+        }
+      }
+      if (a.hasAttribute('aria-current')) {
+        /* already on this language: just close the menu */
+        e.preventDefault();
+        closeMenu(true);
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !list.hidden) closeMenu(true);
+    });
+    document.addEventListener('click', (e) => {
+      if (!menu.contains(e.target as Node)) closeMenu(false);
+    });
+    menu.addEventListener('focusout', (e) => {
+      const next = e.relatedTarget as Node | null;
+      if (next && !menu.contains(next)) closeMenu(false);
+    });
+  }
+</script>

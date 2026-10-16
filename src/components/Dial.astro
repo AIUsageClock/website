@@ -1,0 +1,24 @@
+---
+/** Decorative clock dial behind the hero. Pure SVG, no data. */
+---
+<svg class="dial" viewBox="0 0 1000 1000" aria-hidden="true" focusable="false">
+  <circle cx="500" cy="500" r="480" stroke-width="1.5"/>
+  <circle cx="500" cy="500" r="300" stroke-width="1.5"/>
+  <path class="mn" d="M550.2 22.6L548.3 40.5M599.8 30.5L596.1 48.1M648.3 43.5L642.8 60.6M695.2 61.5L687.9 77.9M782.1 111.7L771.6 126.2M821.2 143.3L809.1 156.7M856.7 178.8L843.3 190.9M888.3 217.9L873.8 228.4M938.5 304.8L922.1 312.1M956.5 351.7L939.4 357.2M969.5 400.2L951.9 403.9M977.4 449.8L959.5 451.7M977.4 550.2L959.5 548.3M969.5 599.8L951.9 596.1M956.5 648.3L939.4 642.8M938.5 695.2L922.1 687.9M888.3 782.1L873.8 771.6M856.7 821.2L843.3 809.1M821.2 856.7L809.1 843.3M782.1 888.3L771.6 873.8M695.2 938.5L687.9 922.1M648.3 956.5L642.8 939.4M599.8 969.5L596.1 951.9M550.2 977.4L548.3 959.5M449.8 977.4L451.7 959.5M400.2 969.5L403.9 951.9M351.7 956.5L357.2 939.4M304.8 938.5L312.1 922.1M217.9 888.3L228.4 873.8M178.8 856.7L190.9 843.3M143.3 821.2L156.7 809.1M111.7 782.1L126.2 771.6M61.5 695.2L77.9 687.9M43.5 648.3L60.6 642.8M30.5 599.8L48.1 596.1M22.6 550.2L40.5 548.3M22.6 449.8L40.5 451.7M30.5 400.2L48.1 403.9M43.5 351.7L60.6 357.2M61.5 304.8L77.9 312.1M111.7 217.9L126.2 228.4M143.3 178.8L156.7 190.9M178.8 143.3L190.9 156.7M217.9 111.7L228.4 126.2M304.8 61.5L312.1 77.9M351.7 43.5L357.2 60.6M400.2 30.5L403.9 48.1M449.8 22.6L451.7 40.5"/>
+  <path class="mj" d="M500.0 20.0L500.0 66.0M740.0 84.3L717.0 124.1M915.7 260.0L875.9 283.0M980.0 500.0L934.0 500.0M915.7 740.0L875.9 717.0M740.0 915.7L717.0 875.9M500.0 980.0L500.0 934.0M260.0 915.7L283.0 875.9M84.3 740.0L124.1 717.0M20.0 500.0L66.0 500.0M84.3 260.0L124.1 283.0M260.0 84.3L283.0 124.1"/>
+  <path class="arc" pathLength="1" d="M500 100A400 400 0 0 1 846 700"/>
+</svg>
+
+<style>
+  .dial{position:absolute;left:50%;top:50%;width:min(1200px,160vw);height:auto;aspect-ratio:1;transform:translate(-50%,-50%);pointer-events:none;color:var(--ink)}
+  .dial circle{fill:none;stroke:currentColor;stroke-opacity:calc(.12*var(--dial-k))}
+  .dial .mn{stroke:currentColor;stroke-opacity:calc(.15*var(--dial-k));stroke-width:2;fill:none}
+  .dial .mj{stroke:currentColor;stroke-opacity:calc(.24*var(--dial-k));stroke-width:5;stroke-linecap:round;fill:none}
+  .dial .arc{stroke:var(--orange);stroke-width:5;stroke-linecap:round;fill:none;opacity:.6}
+  @media (prefers-reduced-motion:no-preference){
+    .dial .mn,.dial .mj{animation:fade 1.8s ease-out both}
+    .dial .arc{stroke-dasharray:1;stroke-dashoffset:1;animation:draw 2.4s .35s cubic-bezier(.3,.7,.2,1) forwards}
+  }
+  @keyframes fade{from{opacity:0}to{opacity:1}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+</style>
