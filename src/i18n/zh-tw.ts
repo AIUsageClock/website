@@ -52,10 +52,10 @@ export const zhTw: DeepPartial<Messages> = {
       resets: {
         problem: '用量突然歸零了，卻不知道是怎麼回事。',
         heading: '有預告的先知道，沒預告的查得到。',
-        body: '打開重置公告功能後，AI Usage Clock 會幫你抓 Codex 和 Claude 的重置公告。有些重置會事先預告，讓你有時間準備；有些則是突然就來了，所以方塊會一直留著最新一則公告，點一下就能打開原始貼文。',
-        alt: 'Codex Resets 方塊顯示 Reset（額度已補滿，1 天前），Claude Resets 方塊顯示 Banked（重置券，21 天前）',
+        body: '打開重置公告功能後，AI Usage Clock 會幫你抓 Codex 和 Claude 的重置公告。有些重置會事先預告，讓你有時間準備；有些則是突然就來了，所以區塊會一直留著最新一則公告，點一下就能打開原始貼文。',
+        alt: 'Codex Resets 區塊顯示 Reset（額度已補滿，1 天前），Claude Resets 區塊顯示 Banked（重置券，21 天前）',
         caption:
-          'Codex Resets 和 Claude Resets 方塊，從實際執行中的 1.0.0 發行版擷取；畫面上的用量是擷取當下的數字。',
+          'Codex Resets 和 Claude Resets 區塊，從實際執行中的 1.0.0 發行版擷取；畫面上的用量是擷取當下的數字。',
       },
       compact: {
         problem: '桌面空間有限，不一定擺得下另一個視窗。',
@@ -133,13 +133,13 @@ export const zhTw: DeepPartial<Messages> = {
         when: '重置時',
         tag: 'Reset（已重置）',
         heading: '額度已經補滿。',
-        body: '方塊會顯示最新一筆事件和距今多久。另一種相關類型是 Banked（重置券）：你拿到一張重置券，可以留著自己兌換。Claude 會顯示 Reset 和 Banked 兩種。',
+        body: '區塊會顯示最新一筆事件和距今多久。另一種相關類型是 Banked（重置券）：你拿到一張重置券，可以留著自己兌換。Claude 會顯示 Reset 和 Banked 兩種。',
       },
       silent: {
         when: '事後，用量歸零時',
         tag: '',
         heading: '有些重置，說來就來。',
-        body: '用量突然歸零時，打開方塊看看是不是剛重置。最新一則公告會一直留著，點一下就能打開原始貼文。',
+        body: '用量突然歸零時，打開區塊看看是不是剛重置。最新一則公告會一直留著，點一下就能打開原始貼文。',
       },
     },
     caveatHtml:
@@ -154,7 +154,7 @@ export const zhTw: DeepPartial<Messages> = {
         q: '重置公告是怎麼抓的？',
         parasHtml: [
           '預設是關的。到 <strong>Settings → General</strong>（一般）打開 <strong>Codex Resets</strong> 或 <strong>Claude Resets</strong>，AI Usage Clock 就會去讀 codex-resets.com 和 claude-resets.com；程式開著的時候，每個站最多每 15 分鐘問一次。',
-          '方塊會顯示最新一筆事件和距今多久，並標上類型：<em>Announced</em>（預告，只有 Codex 有）、<em>Reset</em>（已重置）或 <em>Banked</em>（重置券）。這些資料是第三方整理的，可能會晚到或判斷錯誤，一切以原始貼文為準。',
+          '區塊會顯示最新一筆事件和距今多久，並標上類型：<em>Announced</em>（預告，只有 Codex 有）、<em>Reset</em>（已重置）或 <em>Banked</em>（重置券）。這些資料是第三方整理的，可能會晚到或判斷錯誤，一切以原始貼文為準。',
         ],
         listHtml: [] as string[],
       },
