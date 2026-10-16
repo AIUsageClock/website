@@ -5,8 +5,15 @@
 import '@fontsource-variable/fraunces/opsz.css';
 import '@fontsource-variable/fraunces/opsz-italic.css';
 import '@fontsource-variable/inter/wght.css';
+// The Chinese heading fonts are imported as URLs ("?url"), not as plain CSS imports. A plain import would be
+// bundled into the one stylesheet that every language shares (all three languages are one route), so the English
+// page would carry the Chinese @font-face rules too. A URL import still has Vite process the CSS and copy the
+// .woff2 chunks into dist/_astro, but leaves it to the template below to link only the stylesheet a page needs.
+import notoSerifTcCss from '@fontsource-variable/noto-serif-tc/index.css?url';
+import notoSerifScCss from '@fontsource-variable/noto-serif-sc/index.css?url';
 import '../styles/global.css';
-import { LOCALES } from '../i18n/locales';
+import { LOCALES, DEFAULT_LOCALE, getLocale } from '../i18n/locales';
+import { t } from '../i18n';
 import { SITE_NAME } from '../site';
 
 interface Props {
@@ -19,9 +26,21 @@ interface Props {
   canonicalPath?: string;
   /** Path of this page under each locale prefix ("" for the home page). Sets the hreflang alternates plus x-default. */
   alternatePath?: string;
+  /** Locale code of the page's language ("en", "zh-tw", "zh-cn"). Picks the link-preview image and og:locale. Defaults to English. */
+  locale?: string;
 }
 
-const { title, description, htmlLang, noindex = false, canonicalPath, alternatePath } = Astro.props;
+const { title, description, htmlLang, noindex = false, canonicalPath, alternatePath, locale = DEFAULT_LOCALE } = Astro.props;
+
+// Heading font for Chinese pages, chosen by the <html lang> the page actually carries, the same value the
+// :lang() rules in global.css key on. English pages, and pages that fall back to English, get none.
+const cjkHeadingCss = /^zh-hant/i.test(htmlLang) ? notoSerifTcCss : /^zh-hans/i.test(htmlLang) ? notoSerifScCss : undefined;
+
+// Link preview: one 1200x630 image per language (public/og/<code>.png, made by scripts/render-og.mjs).
+const loc = getLocale(locale);
+const ogImage = new URL(`/og/${loc.code}.png`, Astro.site).href;
+const ogAlt = t(loc.code).meta.ogAlt;
+const ogLocaleAlternates = LOCALES.filter((l) => l.code !== loc.code).map((l) => l.ogLocale);
 
 const canonical = canonicalPath === undefined ? undefined : new URL(canonicalPath, Astro.site).href;
 const alternates =
@@ -51,11 +70,22 @@ const alternates =
     {canonical && <meta property="og:url" content={canonical} />}
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content={loc.ogLocale} />
+    {ogLocaleAlternates.map((l) => <meta property="og:locale:alternate" content={l} />)}
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogAlt} />
     <meta name="color-scheme" content="light dark" />
     <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1a1714" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    {cjkHeadingCss && <link rel="stylesheet" href={cjkHeadingCss} />}
     <script is:inline>
       /* Runs before the page is painted: mark the page as JS-capable and apply a saved theme choice (if any),
          so the page never flashes the wrong theme. Without a saved choice the CSS follows the system. */

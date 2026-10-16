@@ -7,13 +7,16 @@
  *    and is rendered unescaped. Every other string is plain text.
  *  - Object keys are stable identifiers (they are also used for anchors and image lookup), not copy.
  */
-import { LINKS, VERSION } from '../site';
+import { LINKS, VERSION } from '../site.ts';
 
 export const en = {
   meta: {
     title: 'AI Usage Clock — See every AI limit. Know every reset.',
     description:
       'One small desktop widget for the usage limits of your AI services. It also picks up Codex and Claude reset announcements.',
+    /** Alt text of the link-preview image (public/og/<language>.png); describes what that picture shows. */
+    ogAlt:
+      'AI Usage Clock: "See every AI limit. Know every reset." next to a screenshot of the widget with usage bars for Claude, Codex, and Antigravity.',
   },
 
   a11y: {
@@ -232,8 +235,8 @@ export const en = {
     choose: 'Choose your language',
   },
 
+  /** Shown on the root page and on the 404 page, which are not tied to one language: both show all three dictionaries. */
   notFound: {
-    title: 'Page not found — AI Usage Clock',
     heading: 'Page not found',
     body: 'This address does not lead to a page on this site. Check the link, or go back to the home page.',
     back: 'Back to the home page',

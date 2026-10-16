@@ -48,7 +48,17 @@ const codes = LOCALES.map((l) => l.code);
   <main class="pick wrap-b narrow" id="main">
     <Image src={icon} width={216} height={216} format="png" alt="" loading="eager" />
     <h1>{SITE_NAME}</h1>
-    <p class="lab">{m.root.choose}</p>
+    {/* The page is not tied to one language, so the prompt is shown in every language. */}
+    <p class="lab">
+      {
+        LOCALES.map((l, i) => (
+          <>
+            {i > 0 && <span class="sep" aria-hidden="true"> · </span>}
+            <span lang={l.htmlLang}>{t(l.code).root.choose}</span>
+          </>
+        ))
+      }
+    </p>
     <ul>
       {
         LOCALES.map((l) => (
@@ -67,6 +77,12 @@ const codes = LOCALES.map((l) => l.code);
   .pick{display:flex;flex-direction:column;align-items:center;text-align:center;padding-block:clamp(72px,16vw,160px)}
   .pick :global(img){width:72px;height:72px}
   .pick h1{margin-top:20px;font:600 clamp(2rem,6vw,3.2rem)/1.05 var(--f-serif);letter-spacing:-.03em}
-  .pick .lab{margin-top:28px}
+  .pick .lab{margin-top:28px;line-height:1.8}
+  .pick .lab span{white-space:nowrap}
+  /* on a narrow screen the three prompts no longer fit on one line: one per line, without the separators */
+  @media (max-width:560px){
+    .pick .lab{display:grid;gap:2px}
+    .pick .lab .sep{display:none}
+  }
   .pick ul{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:20px}
 </style>

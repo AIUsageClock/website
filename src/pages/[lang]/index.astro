@@ -26,6 +26,7 @@ const m = t(lang);
   noindex={!isComplete(lang)}
   canonicalPath={`/${lang}/`}
   alternatePath=""
+  locale={lang}
 >
   <a class="skip" href="#main">{m.a11y.skip}</a>
   <SiteHeader lang={lang} m={m} />
@@ -37,5 +38,5 @@ const m = t(lang);
     <Faq m={m.faq} />
     <DownloadCard m={m.download} />
   </main>
-  <SiteFooter m={m.footer} />
+  <SiteFooter m={m.footer} lang={lang} />
 </BaseLayout>

@@ -90,4 +90,8 @@ const stories = [
     .also > div,.also > div:first-child,.also > div:last-child{padding-inline:0;border-right:0}
     .also > div:first-child{padding-bottom:36px;border-bottom:1px solid var(--rule)}
   }
+
+  /* Chinese (see global.css): the problem line loses its italic, headings lose the negative tracking. */
+  :global(:root:lang(zh)) .prob{font-style:normal;font-size:clamp(1.4rem,2.5vw,2rem);line-height:1.5;letter-spacing:0}
+  :global(:root:lang(zh)) .st-text h3,:global(:root:lang(zh)) .also h3{letter-spacing:0;line-height:1.35}
 </style>

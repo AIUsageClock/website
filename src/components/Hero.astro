@@ -47,4 +47,11 @@ const { m } = Astro.props;
   @media (max-width:560px){
     .cta .btn-ink{flex:1 1 100%}
   }
+
+  /* Chinese (see global.css): no true italic, so the second line is told apart by colour alone; no negative tracking;
+     a size at which each tagline line (about 9 characters wide) stays on one line from 320px up. */
+  :global(:root:lang(zh)) .hero h1{font-size:clamp(2.1rem,8.7vw,6rem);line-height:1.18;letter-spacing:0;font-feature-settings:"halt"}
+  :global(:root:lang(zh)) .lede{text-wrap:balance}
+  :global(:root:lang(zh)) .hero h1 em{font-style:normal;font-weight:600;letter-spacing:0}
+  :global(:root:lang(zh)) .kicker{font-size:13px;letter-spacing:.14em}
 </style>

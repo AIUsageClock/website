@@ -1,20 +1,22 @@
 ---
 import { Image } from 'astro:assets';
 import icon from '../assets/aiusageclockicon.png';
-import { LINKS, SITE_NAME } from '../site';
+import { LINKS, SITE_NAME, docLink } from '../site';
 import type { Messages } from '../i18n';
 
 interface Props {
   m: Messages['footer'];
+  /** Locale code of the page; picks the translated setup and usage guides when the product repository has them. */
+  lang?: string;
   brandHref?: string;
 }
-const { m, brandHref = '#top' } = Astro.props;
+const { m, lang = 'en', brandHref = '#top' } = Astro.props;
 
 const links = [
   { href: LINKS.repo, label: m.links.github },
   { href: LINKS.releases, label: m.links.download },
-  { href: LINKS.setup, label: m.links.setup },
-  { href: LINKS.usage, label: m.links.usage },
+  { href: docLink('setup', lang), label: m.links.setup },
+  { href: docLink('usage', lang), label: m.links.usage },
   { href: LINKS.mcp, label: m.links.mcp },
   { href: LINKS.changelog, label: m.links.changelog },
   { href: LINKS.license, label: m.links.license },

@@ -17,14 +17,16 @@ export interface LocaleInfo {
   htmlLang: string;
   /** Value of hreflang on <link rel="alternate">. */
   hreflang: string;
+  /** Value of og:locale: language_TERRITORY with an underscore, as the Open Graph protocol writes it. */
+  ogLocale: string;
 }
 
 export const DEFAULT_LOCALE = 'en';
 
 export const LOCALES: readonly LocaleInfo[] = [
-  { code: 'en', label: 'English', htmlLang: 'en', hreflang: 'en' },
-  { code: 'zh-tw', label: '繁體中文', htmlLang: 'zh-Hant-TW', hreflang: 'zh-TW' },
-  { code: 'zh-cn', label: '简体中文', htmlLang: 'zh-Hans-CN', hreflang: 'zh-CN' },
+  { code: 'en', label: 'English', htmlLang: 'en', hreflang: 'en', ogLocale: 'en_US' },
+  { code: 'zh-tw', label: '繁體中文', htmlLang: 'zh-Hant-TW', hreflang: 'zh-TW', ogLocale: 'zh_TW' },
+  { code: 'zh-cn', label: '简体中文', htmlLang: 'zh-Hans-CN', hreflang: 'zh-CN', ogLocale: 'zh_CN' },
 ];
 
 export function getLocale(code: string): LocaleInfo {
