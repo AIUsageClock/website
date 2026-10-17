@@ -2,7 +2,7 @@
 // Makes the three hero-tagline fonts: one small WOFF2 per language, holding only the characters of that language's
 // hero.line1 and hero.line2 (zh-tw: UoqMunThenKhung, zh-cn: Long Cang, ja: Reggae One).
 //
-//   node scripts/make-hero-fonts.mjs          needs Node >= 22.18 and uv (https://docs.astral.sh/uv/)
+//   node scripts/make-hero-fonts.mjs          needs Node >= 22.22 (package.json engines) and uv (https://docs.astral.sh/uv/)
 //
 // Run it again whenever hero.line1 or hero.line2 changes in zh-tw.ts, zh-cn.ts or ja.ts: the build stops until you do
 // (src/i18n/hero-font-check.ts compares the tagline with the manifest and names the characters that are missing).

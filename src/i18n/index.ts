@@ -17,7 +17,9 @@
  * is not allowed, which stops the build. The problems of all the dictionaries are reported together.
  * It checks the hero tagline of the languages that have their own tagline font (hero-font-check.ts) the same way: a
  * character the font file does not cover, or a font file that is not the one manifest.json describes (size, SHA-256),
- * stops the build and names the command that makes the font again.
+ * stops the build and names the command that makes the font again. The tagline is checked only for a language whose
+ * dictionary is complete: any other page is served in English and loads no tagline font, so its dictionary's tagline is never
+ * drawn in that font (the font files themselves are checked for every language in the manifest).
  */
 import { en } from './en';
 import { zhTw } from './zh-tw';
@@ -69,9 +71,12 @@ if (markupReport.length > 0) {
 
 // The tagline fonts of the Traditional Chinese, Simplified Chinese and Japanese pages hold only the characters of the
 // tagline they were made for. Check the tagline each page shows (English wherever a dictionary has no text) against what its font covers.
+// Only the languages whose dictionary is complete: an incomplete page is served as <html lang="en"> (htmlLangFor), so BaseLayout
+// does not load the tagline font for it and its tagline is not drawn in that font.
+const heroFontsInUse = Object.fromEntries(Object.entries(heroFontManifest.fonts).filter(([code]) => isComplete(code)));
 const heroFontReport = findHeroFontProblems(
-  Object.fromEntries(Object.keys(heroFontManifest.fonts).map((code) => [code, t(code).hero])),
-  heroFontManifest,
+  Object.fromEntries(Object.keys(heroFontsInUse).map((code) => [code, t(code).hero])),
+  { fonts: heroFontsInUse },
 );
 if (heroFontReport.length > 0) {
   throw new Error(
@@ -87,7 +92,7 @@ const heroFontDir = defaultHeroFontDir();
 const heroFontFileReport = findHeroFontFileProblems(heroFontManifest, heroFontDir);
 if (heroFontFileReport.length > 0) {
   throw new Error(
-    `The hero font files do not match manifest.json (src/i18n/hero-font-check.ts):\n${heroFontFileReport.map((p) => `  ${p}`).join('\n')}\n` +
+    `The hero font files do not match manifest.json (src/i18n/hero-font-files.mjs):\n${heroFontFileReport.map((p) => `  ${p}`).join('\n')}\n` +
       'Make the fonts again (needs uv): node scripts/make-hero-fonts.mjs\n' +
       `(Looked in ${heroFontDir}: the build must run from the site folder, the one that holds package.json.)`,
   );

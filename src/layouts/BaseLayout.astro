@@ -20,6 +20,7 @@ import heroFontSc from '../assets/fonts/hero/longcang-hero.woff2?no-inline';
 import heroFontJa from '../assets/fonts/hero/reggaeone-hero.woff2?no-inline';
 import '../styles/global.css';
 import { LOCALES, DEFAULT_LOCALE, getLocale } from '../i18n/locales';
+import { hreflangAlternates } from '../i18n/alternates';
 import { t } from '../i18n';
 import { SITE_NAME } from '../site';
 
@@ -62,16 +63,8 @@ const ogAlt = t(loc.code).meta.ogAlt;
 const ogLocaleAlternates = LOCALES.filter((l) => l.code !== loc.code).map((l) => l.ogLocale);
 
 const canonical = canonicalPath === undefined ? undefined : new URL(canonicalPath, Astro.site).href;
-const alternates =
-  alternatePath === undefined
-    ? []
-    : [
-        ...LOCALES.map((l) => ({
-          hreflang: l.hreflang,
-          href: new URL(`/${l.code}/${alternatePath}`, Astro.site).href,
-        })),
-        { hreflang: 'x-default', href: new URL('/', Astro.site).href },
-      ];
+// The same list /sitemap.xml is written from (i18n/alternates.ts), so the page and the sitemap cannot disagree.
+const alternates = alternatePath === undefined ? [] : hreflangAlternates(alternatePath, Astro.site);
 ---
 
 <!doctype html>

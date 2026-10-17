@@ -8,7 +8,7 @@ usage limits of your AI services and picks up Codex and Claude reset announcemen
 
 Work in progress. The site is built with [Astro](https://astro.build): the home page is in place in seven
 languages (English, Traditional Chinese, Simplified Chinese, Japanese, Latin-American Spanish, French and German),
-and deployment to GitHub Pages is still to come.
+and every push to `main` is built and published to GitHub Pages (see [Deployment](#deployment)).
 
 ## Development
 
@@ -24,6 +24,31 @@ npm run test:html # test the markup rules for the `...Html` dictionary strings (
 npm run og        # redraw the link-preview images (Windows with Microsoft Edge only, see below)
 ```
 
+## Deployment
+
+The site is published with GitHub Pages at <https://aiusageclock.com/> by `.github/workflows/deploy.yml`. Every push to `main`
+runs it, and it can also be started by hand from the repository's Actions tab.
+
+- **Build, then deploy.** The build job runs `npm ci`, `npm run check`, `npm run test:html` and `npm run build`, then uploads
+  `dist/` as the Pages artifact. The deploy job runs only if all of that succeeded, so a broken build never replaces the live site.
+- **Pages source.** The repository's Pages settings (Settings, Pages, Build and deployment) use "GitHub Actions" as the source.
+- **Custom domain.** `aiusageclock.com` is set in the repository's Pages settings, and its DNS records are at the domain
+  registrar. The site is deployed with GitHub Actions, so it does not need a `CNAME` file: according to GitHub's
+  documentation on managing a custom domain, publishing from a custom workflow creates no `CNAME` file and ignores an
+  existing one.
+- **Served from the root of its domain.** `site` in `astro.config.mjs` is `https://aiusageclock.com`, and the pages link to
+  `/_astro/...`, `/og/...` and the language prefixes from the root. Under the default `<owner>.github.io/<repo>/` address the
+  styles, fonts and images would not load, so look at the site on the custom domain.
+- **Pinned actions.** Every action in the workflow is pinned to a full commit SHA, with the release tag in a comment. The
+  workflow's header comment says how to look up the SHA of a newer tag.
+- **`robots.txt` and `sitemap.xml`.** `public/robots.txt` allows all crawlers and points at the sitemap.
+  `src/pages/sitemap.xml.ts` writes `/sitemap.xml` at build time: one entry for each language's home page, each carrying the
+  hreflang alternates of every language plus `x-default`. The alternates come from `hreflangAlternates()` in
+  `src/i18n/alternates.ts`, the same function that writes the pages' own `<link rel="alternate">` tags in `BaseLayout.astro`,
+  so the two cannot disagree. A language whose dictionary is not complete yet (its page is `noindex`) is listed in both on
+  purpose. The root page `/` (a redirect) and the 404 page are not listed. A new language added to `locales.ts` shows up in
+  the sitemap without any change to the sitemap file.
+
 ## URLs and languages
 
 Every language has its own prefix, and `/` is a small page that sends the visitor to a language:
@@ -38,9 +63,10 @@ Every language has its own prefix, and `/` is a small page that sends the visito
 | `/fr/` | French | `fr-FR` | `fr` | `fr_FR` |
 | `/de/` | German | `de-DE` | `de` | `de_DE` |
 
-The table lives in `src/i18n/locales.ts`; the language menu, the hreflang alternates, the Astro i18n routing and the
+The table lives in `src/i18n/locales.ts`; the language menu, the hreflang alternates, the sitemap, the Astro i18n routing and the
 link-preview images all read from it. The hreflang alternates are listed by each language page and by the root page: all
-seven languages plus `x-default`, which points at `/`. The 404 page lists none.
+seven languages plus `x-default`, which points at `/`. The 404 page lists none. They are built in one place,
+`hreflangAlternates()` in `src/i18n/alternates.ts`, which `BaseLayout.astro` and `/sitemap.xml` both call.
 
 **Root page (`/`)**: the script on it sends the visitor to the first of these that exists: the language saved by the
 language menu (`localStorage` key `aiuc-lang`), then the first entry of the browser's language list that the site can
@@ -132,12 +158,14 @@ languages; every other heading keeps Noto Serif TC, SC or JP, and English, Spani
   (so "AI" keeps its Fraunces look), then `Hero Tagline`, then the usual Noto Serif and system fonts. The three fonts have a
   single weight, so the tagline is set at `font-weight: 400` with `font-synthesis: none`: the browser never emboldens or
   slants it. The second line stays upright and differs by colour only.
-- **When the tagline changes, make the fonts again.** The build checks every tagline against `manifest.json`
-  (`src/i18n/hero-font-check.ts`, run by `src/i18n/index.ts`) and fails if a character is not covered, naming the characters.
+- **When the tagline changes, make the fonts again.** The build checks the tagline of every language whose dictionary is
+  complete against `manifest.json` (`src/i18n/hero-font-check.ts`, run by `src/i18n/index.ts`) and fails if a character is not
+  covered, naming the characters. (An incomplete language is served in English and does not load its tagline font, so it is
+  skipped.)
   It also checks the font files themselves (`src/i18n/hero-font-files.mjs`): each WOFF2 must have the size and SHA-256 recorded
   in `manifest.json`, so a file that was edited, replaced or only half written fails the build too, naming the file.
   The fix is one command; it needs [uv](https://docs.astral.sh/uv/) (it runs `scripts/subset-hero-font.py`, a fontTools script
-  with its dependencies pinned in the file itself) and Node 22.18 or newer:
+  with its dependencies pinned in the file itself) and Node 22.22 or newer (the `engines` field of `package.json`):
 
   ```sh
   node scripts/make-hero-fonts.mjs
@@ -154,7 +182,19 @@ languages; every other heading keeps Noto Serif TC, SC or JP, and English, Spani
   step is stopped after 10 minutes (a first run downloads Python and fontTools). To change a font or the google/fonts commit, edit the table at the top of the script; the mismatch message shows the
   new SHA-256.
 - The link-preview images of these three languages use the same subset files (`scripts/render-og.mjs`), so redraw them
-  (`npm run og`) after a tagline change as well.
+  (`npm run og`) after a tagline change as well, once the fonts have been made again (see "Link-preview images" for the order).
+- **Giving another language a tagline font of its own** (steps 1 to 3 of "Adding a language" come first):
+  1. In `scripts/make-hero-fonts.mjs`, import the language's dictionary and add an entry to the `FONTS` table: the font's folder
+     and file name in google/fonts, its family name, the SHA-256 of the font and of its `OFL.txt` (the script stops at the first
+     mismatch and shows the downloaded value), and the name of the WOFF2 to write.
+  2. In `BaseLayout.astro`, import the new WOFF2 with the `?no-inline` suffix (like the three others) and add the language to
+     the `cjk` choice by `<html lang>`, next to its heading stylesheet if it has one.
+  3. In `Hero.astro`, add two rules like the Chinese and Japanese ones there: a `:global(:root:lang(xx)) .hero h1` rule that puts
+     `"Hero Tagline"` after Fraunces in the font stack, with `font-weight: 400` and `font-synthesis: none`, and a
+     `:global(:root:lang(xx)) .hero h1 em` rule for the second line (upright, weight 400, no negative letter spacing), because
+     the second line's default style is italic, weight 500 and tightly spaced.
+  4. Run `node scripts/make-hero-fonts.mjs`, which writes the WOFF2, its `OFL-<Font>.txt` and the new `manifest.json` entry,
+     then `npm run og` (the tagline font of a picture comes from the manifest) and `npm run build`; commit the changed files.
 
 ## Spanish, French and German pages
 
@@ -174,7 +214,11 @@ Each language has a 1200x630 picture for `og:image` and `twitter:image` (`public
 `branding/` folder is not served by the site: upload that file by hand under the repository's Settings, "Social preview".
 
 The pictures are committed. Redraw them when the tagline, the brand or the screenshot changes, and whenever a dictionary's
-`hero.kicker`, `hero.line1` or `hero.line2` changes (a language whose dictionary has no text yet is drawn in English):
+`hero.kicker`, `hero.line1` or `hero.line2` changes (a language whose dictionary has no text yet is drawn in English).
+When a tagline of zh-tw, zh-cn or ja changes, do it in this order: change the tagline, make the hero fonts again
+(`node scripts/make-hero-fonts.mjs`, see "Hero tagline fonts"), then redraw. `scripts/render-og.mjs` makes the same checks as the
+build (the tagline's characters against `manifest.json`, the font files against its size and SHA-256) and stops with that
+instruction when they fail, so it never draws a tagline in a font that does not hold its characters.
 
 ```sh
 npm run og                              # every language and the GitHub card

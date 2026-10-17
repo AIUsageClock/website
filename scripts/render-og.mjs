@@ -18,6 +18,12 @@
 // Nothing is fetched from the network.
 //
 // Edge is looked up in its two standard install folders; set EDGE_PATH to use another browser binary.
+//
+// Before it draws anything it makes the site build's two checks (src/i18n/index.ts), but for every language in the manifest
+// (the build skips a language whose dictionary is incomplete; a picture uses the tagline font either way): the tagline of zh-tw, zh-cn and ja
+// must use only characters its subset font covers, and the font files must be the ones manifest.json describes. After changing a
+// tagline, make the fonts first (`node scripts/make-hero-fonts.mjs`), then run this script: otherwise the pictures would show the
+// new characters in a fallback font, not the one the site uses. The script stops with a message when a check fails.
 
 import { spawn, spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
@@ -35,6 +41,8 @@ import { es } from '../src/i18n/es.ts';
 import { fr } from '../src/i18n/fr.ts';
 import { de } from '../src/i18n/de.ts';
 import { LOCALES } from '../src/i18n/locales.ts';
+import { findHeroFontProblems } from '../src/i18n/hero-font-check.ts';
+import { findHeroFontFileProblems } from '../src/i18n/hero-font-files.mjs';
 import { SITE_NAME } from '../src/site.ts';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -46,10 +54,31 @@ const fontCss = (spec) => pathToFileURL(require.resolve(`@fontsource-variable/${
 
 /** Languages with their own tagline font (zh-tw, zh-cn, ja): code -> { family, file, ... } from the manifest that scripts/make-hero-fonts.mjs writes. */
 const HERO_FONT_DIR = join(root, 'src', 'assets', 'fonts', 'hero');
-const HERO_FONTS = JSON.parse(readFileSync(join(HERO_FONT_DIR, 'manifest.json'), 'utf8')).fonts;
+const HERO_MANIFEST = JSON.parse(readFileSync(join(HERO_FONT_DIR, 'manifest.json'), 'utf8'));
+const HERO_FONTS = HERO_MANIFEST.fonts;
 
 /** Dictionary of every language in locales.ts. A new language must be added here too (the script stops if it is missing). */
 const DICTS = { en, 'zh-tw': zhTw, 'zh-cn': zhCn, ja, es, fr, de };
+
+// The site build's two checks (src/i18n/index.ts), for every language in the manifest, on the tagline each picture shows (English wherever a dictionary
+// has no text, as in page() below): the characters against the manifest's list, then the font files against the manifest's size and
+// SHA-256. Stop here when either fails, so no picture is drawn with a tagline font that does not match its tagline.
+{
+  const heroes = Object.fromEntries(
+    Object.keys(HERO_FONTS).map((code) => {
+      if (!(code in DICTS)) throw new Error(`manifest.json has a hero font for "${code}", but scripts/render-og.mjs has no dictionary for it.`);
+      return [code, { ...en.hero, ...DICTS[code].hero }];
+    }),
+  );
+  const problems = [...findHeroFontProblems(heroes, HERO_MANIFEST), ...findHeroFontFileProblems(HERO_MANIFEST, HERO_FONT_DIR)];
+  if (problems.length > 0) {
+    console.error('The hero tagline fonts do not match the taglines or manifest.json (the site build checks the same thing for complete languages):');
+    for (const p of problems) console.error(`  ${p}`);
+    console.error('Make the fonts again first (needs uv): node scripts/make-hero-fonts.mjs');
+    console.error('Then run this script again.');
+    process.exit(1);
+  }
+}
 
 const LATIN = {
   css: [fontCss('fraunces/opsz.css'), fontCss('fraunces/opsz-italic.css'), fontCss('inter/wght.css')],

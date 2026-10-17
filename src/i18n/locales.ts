@@ -1,6 +1,7 @@
 /**
  * The one place that lists the site's languages.
- * The globe menu, the hreflang alternates, the URL prefixes and the Astro i18n config
+ * The globe menu, the hreflang alternates (the <link rel="alternate"> tags of the pages and the entries of /sitemap.xml,
+ * both made by alternates.ts), the sitemap's list of pages, the URL prefixes and the Astro i18n config
  * (astro.config.mjs) all read from here.
  *
  * To add a language:
