@@ -75,7 +75,8 @@ language (each to that language's home page; text from the dictionaries, English
    links the setup and usage guides to the English files. Add the language's file-name suffix to `DOC_SUFFIX` there once
    translated guides exist.
 4. If the language needs its own heading font, import the font as a URL in `BaseLayout.astro`, choose it by `<html lang>`,
-   and add the `:lang()` rules (see the Chinese and Japanese sections below).
+   and add the `:lang()` rules (see the Chinese and Japanese sections below). A tagline font of its own is a separate step:
+   see "Hero tagline fonts" below.
 5. Add the dictionary and, if needed, a font entry to `scripts/render-og.mjs`, then draw the link preview (`npm run og`).
 6. `npm run check` and `npm run build`; the new `dist/<code>/index.html` must exist.
 
@@ -85,7 +86,7 @@ regenerates it.
 ## Chinese pages
 
 - Headings use Noto Serif TC on the Traditional page and Noto Serif SC on the Simplified page
-  (`@fontsource-variable/noto-serif-tc` and `-sc`, pinned versions). Fraunces stays first in the font stack, so Latin
+  (`@fontsource-variable/noto-serif-tc` and `-sc`, pinned versions); the two hero tagline lines have their own font (see "Hero tagline fonts"). Fraunces stays first in the font stack, so Latin
   letters and digits keep the English look and only Chinese characters and full-width punctuation use Noto Serif.
   Body text uses the system Chinese fonts (PingFang, Microsoft JhengHei or YaHei, Noto Sans).
 - Each page links only its own font stylesheet, and the English and European-language pages link none: `BaseLayout.astro` imports the CJK font
@@ -99,7 +100,7 @@ regenerates it.
 
 ## Japanese page
 
-- Headings use Noto Serif JP (`@fontsource-variable/noto-serif-jp`, pinned). It is linked the same way as the Chinese fonts:
+- Headings use Noto Serif JP (`@fontsource-variable/noto-serif-jp`, pinned), except the two hero tagline lines (see "Hero tagline fonts"). It is linked the same way as the Chinese fonts:
   `BaseLayout.astro` imports its stylesheet as a URL and writes one `<link>` only when `<html lang>` is `ja`, so no other
   language downloads or declares a Japanese `@font-face`. Fraunces stays first in the stack, so Latin letters and digits keep
   the English look. Body text names the Japanese system fonts after Inter: Hiragino Sans and Hiragino Kaku Gothic ProN, Yu Gothic UI,
@@ -110,6 +111,50 @@ regenerates it.
   and a smaller hero size than English because kana lines are longer.
 - Rules inside a component are written as `:global(:root:lang(ja)) .selector`: Astro's scoped selectors carry an attribute per
   compound selector, so only a rule written inside the component outranks them without `!important`.
+
+## Hero tagline fonts
+
+The two big tagline lines at the top of the home page (`hero.line1` and `hero.line2`) have a font of their own on three
+languages; every other heading keeps Noto Serif TC, SC or JP, and English, Spanish, French and German keep Fraunces.
+
+| Page | Font | Weight |
+|---|---|---|
+| Traditional Chinese (`zh-tw`) | UoqMunThenKhung | 400 |
+| Simplified Chinese (`zh-cn`) | Long Cang | 400 |
+| Japanese (`ja`) | Reggae One | 400 |
+
+- The font files are tiny subsets: one WOFF2 per language holding only the characters of that language's two tagline lines,
+  a few KB each. They are committed in `src/assets/fonts/hero/`, next to `manifest.json` (per language: font, characters
+  covered, source URL, SHA-256, size) and the license texts.
+- `BaseLayout.astro` picks the file by `<html lang>`, the same value that picks the Noto Serif stylesheet, and writes an inline
+  `@font-face` (named `Hero Tagline`, `font-display: swap`) plus `<link rel="preload" as="font" type="font/woff2" crossorigin>`
+  on that language's page only: no other page declares, preloads or links these fonts. `Hero.astro` puts Fraunces first
+  (so "AI" keeps its Fraunces look), then `Hero Tagline`, then the usual Noto Serif and system fonts. The three fonts have a
+  single weight, so the tagline is set at `font-weight: 400` with `font-synthesis: none`: the browser never emboldens or
+  slants it. The second line stays upright and differs by colour only.
+- **When the tagline changes, make the fonts again.** The build checks every tagline against `manifest.json`
+  (`src/i18n/hero-font-check.ts`, run by `src/i18n/index.ts`) and fails if a character is not covered, naming the characters.
+  It also checks the font files themselves (`src/i18n/hero-font-files.mjs`): each WOFF2 must have the size and SHA-256 recorded
+  in `manifest.json`, so a file that was edited, replaced or only half written fails the build too, naming the file.
+  The fix is one command; it needs [uv](https://docs.astral.sh/uv/) (it runs `scripts/subset-hero-font.py`, a fontTools script
+  with its dependencies pinned in the file itself) and Node 22.18 or newer:
+
+  ```sh
+  node scripts/make-hero-fonts.mjs
+  ```
+
+  It reads the tagline characters from the dictionaries, downloads each font and its `OFL.txt` from
+  [google/fonts](https://github.com/google/fonts) at the commit pinned in the script (cached in `_tmp/hero-fonts/`), refuses to
+  go on unless every download has the SHA-256 pinned in the script, stops if a font declares a Reserved Font Name, makes all
+  three subsets in `_tmp/hero-fonts/staged/` first and only when every language has succeeded writes the subsets, the
+  `OFL-<Font>.txt` files and `manifest.json` into `src/assets/fonts/hero/` (a failed run leaves that folder as it was), then you
+  commit the changed files. The WOFF2 subsets are deterministic: the same taglines, the same pinned fonts and the same tool versions
+  (fontTools and brotli, recorded in `manifest.json`) give the same bytes. `manifest.json` itself differs on every
+  run on a new day, because it records the date it was made (`generator.generated`), and when the tool versions change. The `uv`
+  step is stopped after 10 minutes (a first run downloads Python and fontTools). To change a font or the google/fonts commit, edit the table at the top of the script; the mismatch message shows the
+  new SHA-256.
+- The link-preview images of these three languages use the same subset files (`scripts/render-og.mjs`), so redraw them
+  (`npm run og`) after a tagline change as well.
 
 ## Spanish, French and German pages
 
@@ -140,7 +185,8 @@ node scripts/render-og.mjs --skip-github  # every language, GitHub card left alo
 This needs Windows with Microsoft Edge: `scripts/render-og.mjs` writes one HTML page per picture into `_tmp/og/`, prints it to
 PNG with headless Edge, checks the size and shrinks the file (with `sharp`, a devDependency pinned in `package.json`). Set `EDGE_PATH` if Edge is not in its standard folder.
 The text comes from the language dictionaries (`hero.kicker`, `hero.line1`, `hero.line2`), the fonts from `node_modules` (Japanese
-uses Noto Serif JP, the Chinese pages Noto Serif TC and SC), and the picture on the right from `src/assets/windows-1.0.0.png`.
+uses Noto Serif JP, the Chinese pages Noto Serif TC and SC; the tagline of those three languages uses the subset fonts in
+`src/assets/fonts/hero/`), and the picture on the right from `src/assets/windows-1.0.0.png`.
 The tagline starts at a tuned size and shrinks until each line fits the left column; if it still does not fit at the smallest
 size, the lines wrap between words (between phrases in Japanese). Look at the PNGs before committing them: every language in
 `locales.ts` needs a dictionary entry in the script, which stops with a message when one is missing.
@@ -152,4 +198,17 @@ size, the lines wrap between words (between phrases in Japanese). Look at the PN
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE) for the site's own code and text.
+
+Fonts are third-party and keep their own licenses:
+
+- The three hero tagline subsets in `src/assets/fonts/hero/` are made from fonts under the
+  [SIL Open Font License 1.1](https://openfontlicense.org): UoqMunThenKhung (Copyright 2025 The UoqMunThenKhung Project
+  Authors), Long Cang (Copyright 2018 The Long Cang Project Authors) and Reggae One (Copyright 2020 The Reggae Project
+  Authors). The full license text with the copyright notice is next to each file (`OFL-UoqMunThenKhung.txt`,
+  `OFL-LongCang.txt`, `OFL-ReggaeOne.txt`, copied unchanged from google/fonts; `.gitattributes` stops Git from converting their
+  line endings, so the committed bytes are the ones whose SHA-256 `manifest.json` records), and the notices are kept in each font's own
+  name table. None of the three declares a Reserved Font Name, so a subset may keep the name. `manifest.json` records
+  where each font was taken from.
+- Fraunces, Inter and Noto Serif TC, SC and JP come from the `@fontsource-variable/*` packages (also OFL 1.1, each with its own
+  `LICENSE` inside the package).

@@ -15,6 +15,9 @@
  *
  * Importing this module also checks every `...Html` string of every dictionary (html-check.ts) and throws on markup that
  * is not allowed, which stops the build. The problems of all the dictionaries are reported together.
+ * It checks the hero tagline of the languages that have their own tagline font (hero-font-check.ts) the same way: a
+ * character the font file does not cover, or a font file that is not the one manifest.json describes (size, SHA-256),
+ * stops the build and names the command that makes the font again.
  */
 import { en } from './en';
 import { zhTw } from './zh-tw';
@@ -25,6 +28,9 @@ import { fr } from './fr';
 import { de } from './de';
 import { DEFAULT_LOCALE, getLocale } from './locales';
 import { findHtmlProblems } from './html-check';
+import { findHeroFontProblems } from './hero-font-check';
+import { defaultHeroFontDir, findHeroFontFileProblems } from './hero-font-files.mjs';
+import heroFontManifest from '../assets/fonts/hero/manifest.json';
 
 type Widen<T> = T extends string ? string : T extends readonly (infer U)[] ? Widen<U>[] : { [K in keyof T]: Widen<T[K]> };
 
@@ -59,6 +65,32 @@ for (const [code, dict] of Object.entries(DICTS)) {
 }
 if (markupReport.length > 0) {
   throw new Error(`Markup that is not allowed in the dictionaries (see src/i18n/html-check.ts):\n${markupReport.join('\n')}`);
+}
+
+// The tagline fonts of the Traditional Chinese, Simplified Chinese and Japanese pages hold only the characters of the
+// tagline they were made for. Check the tagline each page shows (English wherever a dictionary has no text) against what its font covers.
+const heroFontReport = findHeroFontProblems(
+  Object.fromEntries(Object.keys(heroFontManifest.fonts).map((code) => [code, t(code).hero])),
+  heroFontManifest,
+);
+if (heroFontReport.length > 0) {
+  throw new Error(
+    `The hero tagline uses characters its font file does not cover (src/i18n/hero-font-check.ts):\n${heroFontReport.map((p) => `  ${p}`).join('\n')}\n` +
+      'Make the fonts again (needs uv): node scripts/make-hero-fonts.mjs',
+  );
+}
+
+// The check above trusts the character list in manifest.json. This one checks the files themselves: every WOFF2 must have
+// the size and SHA-256 the manifest records, so a font that was edited, replaced or only half written by the generator stops
+// the build too (hero-font-files.mjs; the folder is taken from the working directory, the site root).
+const heroFontDir = defaultHeroFontDir();
+const heroFontFileReport = findHeroFontFileProblems(heroFontManifest, heroFontDir);
+if (heroFontFileReport.length > 0) {
+  throw new Error(
+    `The hero font files do not match manifest.json (src/i18n/hero-font-check.ts):\n${heroFontFileReport.map((p) => `  ${p}`).join('\n')}\n` +
+      'Make the fonts again (needs uv): node scripts/make-hero-fonts.mjs\n' +
+      `(Looked in ${heroFontDir}: the build must run from the site folder, the one that holds package.json.)`,
+  );
 }
 
 type Tree = string | Tree[] | { [key: string]: Tree };

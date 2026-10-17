@@ -12,14 +12,16 @@
 //   node scripts/render-og.mjs --skip-github   every language, leave branding/github-social-preview.png alone
 //
 // Text comes from the language dictionaries (a language that has not translated a string yet shows the English one);
-// fonts are the Fontsource files in node_modules; the picture on the right is src/assets/windows-1.0.0.png.
+// fonts are the Fontsource files in node_modules, and for the tagline of the Traditional Chinese, Simplified Chinese and Japanese
+// pictures the subset fonts in src/assets/fonts/hero/ (the ones the site uses; see scripts/make-hero-fonts.mjs);
+// the picture on the right is src/assets/windows-1.0.0.png.
 // Nothing is fetched from the network.
 //
 // Edge is looked up in its two standard install folders; set EDGE_PATH to use another browser binary.
 
 import { spawn, spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
-import { existsSync, mkdirSync, rmSync, statSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 // sharp is a devDependency of this site, pinned to an exact version in package.json (Astro also uses it for image optimisation).
@@ -41,6 +43,10 @@ const require = createRequire(import.meta.url);
 
 /** Absolute file:// URL of a file inside a Fontsource package, e.g. fontCss('fraunces/opsz.css'). */
 const fontCss = (spec) => pathToFileURL(require.resolve(`@fontsource-variable/${spec}`)).href;
+
+/** Languages with their own tagline font (zh-tw, zh-cn, ja): code -> { family, file, ... } from the manifest that scripts/make-hero-fonts.mjs writes. */
+const HERO_FONT_DIR = join(root, 'src', 'assets', 'fonts', 'hero');
+const HERO_FONTS = JSON.parse(readFileSync(join(HERO_FONT_DIR, 'manifest.json'), 'utf8')).fonts;
 
 /** Dictionary of every language in locales.ts. A new language must be added here too (the script stops if it is missing). */
 const DICTS = { en, 'zh-tw': zhTw, 'zh-cn': zhCn, ja, es, fr, de };
@@ -134,6 +140,13 @@ function page(img) {
   const L = LANGS[img.lang];
   const hero = { ...en.hero, ...L.dict.hero };
   const zh = L.cjk; // Chinese and Japanese: no italic, no negative tracking, a taller line
+  // The tagline font of this language, if it has one: declared as "Hero Tagline" like on the site, Fraunces first (for "AI"),
+  // weight 400 (the fonts have no other) and no synthesised bold or slant.
+  const heroFont = HERO_FONTS[img.lang];
+  const heroFace = heroFont
+    ? `@font-face{font-family:"Hero Tagline";font-style:normal;font-weight:400;src:url("${pathToFileURL(join(HERO_FONT_DIR, heroFont.file)).href}") format("woff2")}`
+    : '';
+  const tagSerif = heroFont ? `"Fraunces Variable","Hero Tagline",${L.serif}` : L.serif;
   const tagFs = img.startFs ?? L.startFs;
   const dialLeft = img.shotX - img.dial / 2;
   const iconUrl = pathToFileURL(join(root, 'src/assets/aiusageclockicon.png')).href;
@@ -144,6 +157,7 @@ function page(img) {
 <meta charset="utf-8">
 ${L.css.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n')}
 <style>
+  ${heroFace}
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{width:${img.w}px;height:${img.h}px}
   body{position:relative;overflow:hidden;background:#f7f4ee;color:#1c1917;font-family:${L.sans};-webkit-font-smoothing:antialiased}
@@ -159,7 +173,7 @@ ${L.css.map((href) => `<link rel="stylesheet" href="${href}">`).join('\n')}
   .brand img{width:${img.icon}px;height:${img.icon}px}
   .brand span{font:600 ${img.brandFs}px/1 ${L.serif};letter-spacing:-.01em}
   .kicker{font:600 ${zh ? 17 : 15}px/1 ${L.sans};letter-spacing:${zh ? '.14em' : '.2em'};text-transform:uppercase;color:#57534e;margin-bottom:22px}
-  h1{font:600 ${tagFs}px/${zh ? 1.2 : 1.02} ${L.serif};letter-spacing:${zh ? 0 : '-.04em'};${zh ? 'font-feature-settings:"halt";' : ''}}
+  h1{font:${heroFont ? 400 : 600} ${tagFs}px/${zh ? 1.2 : 1.02} ${tagSerif};${heroFont ? 'font-synthesis:none;' : ''}letter-spacing:${zh ? 0 : '-.04em'};${zh ? 'font-feature-settings:"halt";' : ''}}
   h1 span,h1 em{display:block;white-space:nowrap}
   /* set by the fit script below when a tagline line is too long for the column even at the smallest size: wrap it between words (phrases in Japanese) */
   h1.wrap span,h1.wrap em{white-space:normal;text-wrap:balance;word-break:auto-phrase;overflow-wrap:break-word}

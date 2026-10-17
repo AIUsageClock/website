@@ -1,0 +1,7 @@
+# The OFL texts next to the hero fonts are copied unchanged from google/fonts, and at least one of them
+# (OFL-ReggaeOne.txt) has CRLF line endings. "-text" tells Git never to convert them, whatever core.autocrlf says,
+# so the committed bytes stay the ones whose SHA-256 is recorded as licenseSha256 in manifest.json.
+src/assets/fonts/hero/OFL-*.txt -text
+
+# Font files are binary: never diffed, never converted.
+*.woff2 binary

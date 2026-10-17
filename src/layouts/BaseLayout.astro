@@ -12,6 +12,12 @@ import '@fontsource-variable/inter/wght.css';
 import notoSerifTcCss from '@fontsource-variable/noto-serif-tc/index.css?url';
 import notoSerifScCss from '@fontsource-variable/noto-serif-sc/index.css?url';
 import notoSerifJpCss from '@fontsource-variable/noto-serif-jp/index.css?url';
+// The hero tagline of the Chinese and Japanese pages has its own font: a WOFF2 holding only the characters of that
+// language's two tagline lines (made by scripts/make-hero-fonts.mjs). "?no-inline" keeps Vite from turning a file under 4 KB
+// into a data: URI, which a <link rel="preload"> could not use; the file is copied to dist/_astro with a hash in its name.
+import heroFontTc from '../assets/fonts/hero/uoqmunthenkhung-hero.woff2?no-inline';
+import heroFontSc from '../assets/fonts/hero/longcang-hero.woff2?no-inline';
+import heroFontJa from '../assets/fonts/hero/reggaeone-hero.woff2?no-inline';
 import '../styles/global.css';
 import { LOCALES, DEFAULT_LOCALE, getLocale } from '../i18n/locales';
 import { t } from '../i18n';
@@ -33,15 +39,21 @@ interface Props {
 
 const { title, description, htmlLang, noindex = false, canonicalPath, alternatePath, locale = DEFAULT_LOCALE } = Astro.props;
 
-// Heading font for Chinese and Japanese pages, chosen by the <html lang> the page actually carries, the same value the
-// :lang() rules in global.css key on. English and European-language pages, and any page that falls back to English, get none.
-const cjkHeadingCss = /^zh-hant/i.test(htmlLang)
-  ? notoSerifTcCss
+// Fonts for Chinese and Japanese pages, chosen by the <html lang> the page actually carries, the same value the
+// :lang() rules in global.css and Hero.astro key on: the heading stylesheet (Noto Serif) and the hero tagline font file.
+// English and European-language pages, and any page that falls back to English, get none.
+const cjk = /^zh-hant/i.test(htmlLang)
+  ? { headingCss: notoSerifTcCss, heroFont: heroFontTc }
   : /^zh-hans/i.test(htmlLang)
-    ? notoSerifScCss
+    ? { headingCss: notoSerifScCss, heroFont: heroFontSc }
     : /^ja(-|$)/i.test(htmlLang)
-      ? notoSerifJpCss
+      ? { headingCss: notoSerifJpCss, heroFont: heroFontJa }
       : undefined;
+// The hero tagline font is declared under one name, "Hero Tagline", which Hero.astro puts in the font stack of the tagline.
+// Only the page of its language declares and preloads it. It has a single weight (400): see Hero.astro.
+const heroFontFace = cjk
+  ? `@font-face{font-family:"Hero Tagline";font-style:normal;font-weight:400;font-display:swap;src:url(${cjk.heroFont}) format("woff2")}`
+  : undefined;
 
 // Link preview: one 1200x630 image per language (public/og/<code>.png, made by scripts/render-og.mjs).
 const loc = getLocale(locale);
@@ -92,7 +104,9 @@ const alternates =
     <meta name="theme-color" content="#1a1714" media="(prefers-color-scheme: dark)" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    {cjkHeadingCss && <link rel="stylesheet" href={cjkHeadingCss} />}
+    {cjk && <link rel="preload" as="font" type="font/woff2" href={cjk.heroFont} crossorigin />}
+    {heroFontFace && <style is:inline set:html={heroFontFace} />}
+    {cjk && <link rel="stylesheet" href={cjk.headingCss} />}
     <script is:inline>
       /* Runs before the page is painted: mark the page as JS-capable and apply a saved theme choice (if any),
          so the page never flashes the wrong theme. Without a saved choice the CSS follows the system. */
