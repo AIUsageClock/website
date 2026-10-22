@@ -54,7 +54,7 @@ export const de: DeepPartial<Messages> = {
       overview: {
         problem: 'Jeder KI-Dienst zeigt seine Limits woanders an.',
         heading: 'Deine KI-Limits an einem Ort.',
-        body: 'Claude, Codex, Antigravity, OpenCode Go, GitHub Copilot und OpenRouter nebeneinander, jeder Dienst mit eigenem Verbrauchsbalken. Bei laufenden Limits steht neben dem Balken außerdem die verbleibende Zeit.',
+        body: 'Claude, Codex, Antigravity, OpenCode Go, GitHub Copilot, OpenRouter und Linear nebeneinander, jeder Dienst mit eigenem Verbrauchsbalken. Bei laufenden Limits steht neben dem Balken außerdem die verbleibende Zeit.',
         alt: 'AI Usage Clock im Vollmodus mit Claude, Codex, OpenCode, Copilot und OpenRouter, jeweils mit Verbrauchsbalken und verbleibender Zeit',
         caption: 'Ein Widget, mehrere Dienste, jeder mit eigenem Balken. Beispieldaten.',
       },
@@ -123,6 +123,12 @@ export const de: DeepPartial<Messages> = {
         what: 'Ausgaben heute · im Monat',
         howHtml:
           'Optional ein Tagesbudget; mit einem Management-Schlüssel auch Guthaben und Aktivität pro Modell. API-Schlüssel von OpenRouter.',
+      },
+      linear: {
+        name: 'Linear',
+        what: 'Issues · Limit im Free-Tarif',
+        howHtml:
+          'Balken für das Limit von 250 nicht archivierten Issues im kostenlosen Tarif; bei Bezahltarifen steht dort <em>no limit</em>. Persönlicher API-Schlüssel von Linear.',
       },
     },
     noteHtml:
@@ -234,7 +240,7 @@ export const de: DeepPartial<Messages> = {
       license: 'Lizenz (MIT)',
     },
     disclaimer:
-      'AI Usage Clock steht in keiner Verbindung zu Anthropic, OpenAI, Google, GitHub, Microsoft, OpenCode, OpenRouter oder anderen Anbietern. Produktnamen gehören ihren jeweiligen Inhabern.',
+      'AI Usage Clock steht in keiner Verbindung zu Anthropic, OpenAI, Google, GitHub, Microsoft, OpenCode, OpenRouter, Linear oder anderen Anbietern. Produktnamen gehören ihren jeweiligen Inhabern.',
     version: `Aktuelle Version ${VERSION} · Kostenlos und Open Source unter der MIT-Lizenz.`,
   },
 

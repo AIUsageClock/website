@@ -45,7 +45,7 @@ export const zhTw: DeepPartial<Messages> = {
       overview: {
         problem: '每家 AI 的額度，都要各自點進去看。',
         heading: '各家 AI 額度，一個視窗看完。',
-        body: 'Claude、Codex、Antigravity、OpenCode Go、GitHub Copilot、OpenRouter 並排顯示，每個服務都有自己的用量條；使用中的額度，旁邊還會標出剩餘時間。',
+        body: 'Claude、Codex、Antigravity、OpenCode Go、GitHub Copilot、OpenRouter、Linear 並排顯示，每個服務都有自己的用量條；使用中的額度，旁邊還會標出剩餘時間。',
         alt: 'AI Usage Clock 的完整模式：Claude、Codex、OpenCode、Copilot、OpenRouter 各有用量條和剩餘時間',
         caption: '一個小視窗，好幾個服務，各有各的用量條。範例資料。',
       },
@@ -112,6 +112,12 @@ export const zhTw: DeepPartial<Messages> = {
         name: 'OpenRouter',
         what: '今天花費 · 本月花費',
         howHtml: '可另設每日預算；有管理金鑰的話，還看得到餘額和各模型的使用情形。OpenRouter API 金鑰。',
+      },
+      linear: {
+        name: 'Linear',
+        what: 'Issue 數量 · 免費方案上限',
+        howHtml:
+          '用進度條對照免費方案 250 筆未封存 issue 的上限；付費方案則顯示 <em>no limit</em>。Linear 個人 API 金鑰（personal API key）。',
       },
     },
     noteHtml:
@@ -218,7 +224,7 @@ export const zhTw: DeepPartial<Messages> = {
       license: '授權（MIT）',
     },
     disclaimer:
-      'AI Usage Clock 和 Anthropic、OpenAI、Google、GitHub、Microsoft、OpenCode、OpenRouter 或其他任何服務商都沒有隸屬關係。各產品名稱屬於各自的所有者。',
+      'AI Usage Clock 和 Anthropic、OpenAI、Google、GitHub、Microsoft、OpenCode、OpenRouter、Linear 或其他任何服務商都沒有隸屬關係。各產品名稱屬於各自的所有者。',
     version: `目前版本 ${VERSION} · 免費，以 MIT 授權開源。`,
   },
 

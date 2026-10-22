@@ -47,7 +47,7 @@ export const ja: DeepPartial<Messages> = {
       overview: {
         problem: 'AI ごとに、上限を確認する場所がばらばら。',
         heading: 'AI の上限を一か所に。',
-        body: 'Claude、Codex、Antigravity、OpenCode Go、GitHub Copilot、OpenRouter を並べて表示し、サービスごとに使用量バーが付きます。期間が始まっている上限には、バーの横に残り時間も表示されます。',
+        body: 'Claude、Codex、Antigravity、OpenCode Go、GitHub Copilot、OpenRouter、Linear を並べて表示し、サービスごとに使用量バーが付きます。期間が始まっている上限には、バーの横に残り時間も表示されます。',
         alt: 'AI Usage Clock のフルモード。Claude、Codex、OpenCode、Copilot、OpenRouter が並び、それぞれに使用量バーと残り時間が表示されている',
         caption: 'ひとつのウィジェットに複数のサービス。それぞれに使用量バーが付きます。サンプルデータ。',
       },
@@ -116,6 +116,12 @@ export const ja: DeepPartial<Messages> = {
         what: '今日の利用額 · 今月の利用額',
         howHtml:
           '任意で 1 日の予算を設定できます。管理キーがあれば、残高とモデル別のアクティビティも表示します。OpenRouter の API キー。',
+      },
+      linear: {
+        name: 'Linear',
+        what: 'Issue 数 · 無料プランの上限',
+        howHtml:
+          'アーカイブされていない issue 250 件という無料プランの上限に対する使用量を、バーで表示します。有料プランでは <em>no limit</em> と表示。Linear の personal API key。',
       },
     },
     noteHtml:
@@ -224,7 +230,7 @@ export const ja: DeepPartial<Messages> = {
       license: 'ライセンス（MIT）',
     },
     disclaimer:
-      'AI Usage Clock は、Anthropic、OpenAI、Google、GitHub、Microsoft、OpenCode、OpenRouter をはじめ、どのサービス提供元とも提携関係にありません。各製品名は、それぞれの権利者に帰属します。',
+      'AI Usage Clock は、Anthropic、OpenAI、Google、GitHub、Microsoft、OpenCode、OpenRouter、Linear をはじめ、どのサービス提供元とも提携関係にありません。各製品名は、それぞれの権利者に帰属します。',
     version: `現在のバージョン ${VERSION} · MIT ライセンスの無料オープンソースです。`,
   },
 

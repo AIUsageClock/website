@@ -50,7 +50,7 @@ export const en = {
       overview: {
         problem: 'Every AI service keeps its limits in its own corner.',
         heading: 'Your AI limits in one place.',
-        body: 'Claude, Codex, Antigravity, OpenCode Go, GitHub Copilot, and OpenRouter, side by side, each with its own usage bar. Active limits also show the time left next to the bar.',
+        body: 'Claude, Codex, Antigravity, OpenCode Go, GitHub Copilot, OpenRouter, and Linear, side by side, each with its own usage bar. Active limits also show the time left next to the bar.',
         alt: 'AI Usage Clock full mode listing Claude, Codex, OpenCode, Copilot, and OpenRouter, each with usage bars and the time left',
         caption: 'One widget, several services, each with its own bar. Sample data.',
       },
@@ -119,6 +119,12 @@ export const en = {
         what: 'Spend today · This month',
         howHtml:
           'An optional daily budget; balance and model activity with a management key. OpenRouter API key.',
+      },
+      linear: {
+        name: 'Linear',
+        what: 'Issues · Free plan limit',
+        howHtml:
+          "A bar for the Free plan's limit of 250 unarchived issues; paid plans show <em>no limit</em>. Linear personal API key.",
       },
     },
     noteHtml:
@@ -228,7 +234,7 @@ export const en = {
       license: 'License (MIT)',
     },
     disclaimer:
-      'AI Usage Clock is not affiliated with Anthropic, OpenAI, Google, GitHub, Microsoft, OpenCode, OpenRouter, or any other provider. Product names belong to their owners.',
+      'AI Usage Clock is not affiliated with Anthropic, OpenAI, Google, GitHub, Microsoft, OpenCode, OpenRouter, Linear, or any other provider. Product names belong to their owners.',
     version: `Current version ${VERSION} · Free and open source under the MIT license.`,
   },
 

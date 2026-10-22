@@ -50,7 +50,7 @@ export const es: DeepPartial<Messages> = {
       overview: {
         problem: 'Para ver los límites de cada IA, hay que entrar a cada servicio por separado.',
         heading: 'Tus límites de IA en un solo lugar.',
-        body: 'Claude, Codex, Antigravity, OpenCode Go, GitHub Copilot y OpenRouter, uno al lado del otro, cada uno con su propia barra de uso. En los límites que están en curso también verás, junto a la barra, cuánto tiempo queda.',
+        body: 'Claude, Codex, Antigravity, OpenCode Go, GitHub Copilot, OpenRouter y Linear, uno al lado del otro, cada uno con su propia barra de uso. En los límites que están en curso también verás, junto a la barra, cuánto tiempo queda.',
         alt: 'Modo completo de AI Usage Clock con Claude, Codex, OpenCode, Copilot y OpenRouter, cada uno con sus barras de uso y el tiempo restante',
         caption: 'Un widget, varios servicios, cada uno con su propia barra. Datos de ejemplo.',
       },
@@ -119,6 +119,12 @@ export const es: DeepPartial<Messages> = {
         what: 'Gasto de hoy · Este mes',
         howHtml:
           'Presupuesto diario opcional; saldo y actividad por modelo si usas una clave de administración. Clave de API de OpenRouter.',
+      },
+      linear: {
+        name: 'Linear',
+        what: 'Issues · Límite del plan gratuito',
+        howHtml:
+          'Barra con el límite de 250 issues sin archivar del plan gratuito; los planes de pago muestran <em>no limit</em>. Clave de API personal de Linear.',
       },
     },
     noteHtml:
@@ -230,7 +236,7 @@ export const es: DeepPartial<Messages> = {
       license: 'Licencia (MIT)',
     },
     disclaimer:
-      'AI Usage Clock no está afiliado a Anthropic, OpenAI, Google, GitHub, Microsoft, OpenCode, OpenRouter ni a ningún otro proveedor. Los nombres de productos pertenecen a sus respectivos propietarios.',
+      'AI Usage Clock no está afiliado a Anthropic, OpenAI, Google, GitHub, Microsoft, OpenCode, OpenRouter, Linear ni a ningún otro proveedor. Los nombres de productos pertenecen a sus respectivos propietarios.',
     version: `Versión actual ${VERSION} · Gratuito y de código abierto, con licencia MIT.`,
   },
 

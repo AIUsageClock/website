@@ -3,7 +3,7 @@
 export const SITE_NAME = 'AI Usage Clock';
 
 /** Shown in the hero, the download card and the footer. Update when a new release ships. */
-export const VERSION = '1.0.0';
+export const VERSION = '1.1.0';
 
 export const REPO = 'https://github.com/AIUsageClock/ai-usage-clock';
 
