@@ -6,7 +6,7 @@
 //
 // Run it again whenever hero.line1 or hero.line2 changes in zh-hant.ts, zh-hans.ts or ja.ts: the build stops until you do
 // (src/i18n/hero-font-check.ts compares the tagline with the manifest and names the characters that are missing).
-// The other languages (English, Spanish, French, German) keep Fraunces and need nothing.
+// The other languages (all Latin-script ones) keep Fraunces and need nothing.
 //
 // What it does, per language:
 //   1. takes the tagline characters from the dictionary (src/i18n/hero-font-check.ts heroChars(), the same function the build check uses);

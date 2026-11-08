@@ -66,6 +66,9 @@ Every language has its own prefix, and `/` is a small page that sends the visito
 | `/es/` | Spanish (Latin America, neutral) | `es-419` | `es` | `es_LA` |
 | `/fr/` | French | `fr-FR` | `fr` | `fr_FR` |
 | `/de/` | German | `de-DE` | `de` | `de_DE` |
+| `/pt-br/` | Brazilian Portuguese | `pt-BR` | `pt-BR` | `pt_BR` |
+| `/vi/` | Vietnamese | `vi` | `vi` | `vi_VN` |
+| `/eo/` | Esperanto | `eo` | `eo` | `eo_EO` |
 
 The table lives in `src/i18n/locales.ts`; the language menu, the hreflang alternates, the sitemap, the Astro i18n routing and the
 link-preview images all read from it. The hreflang alternates are listed by each language page and by the root page: all

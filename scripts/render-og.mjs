@@ -95,7 +95,7 @@ const LATIN = {
 
 /**
  * Per language, on top of LATIN: the extra heading font (Fraunces stays first, so Latin letters keep their look) and the
- * font stacks. Spanish, French and German need nothing extra: the Fraunces and Inter files carry the accented letters.
+ * font stacks. The Latin-script languages (every code not listed below) need nothing extra: LATIN is used as it is.
  */
 const EXTRA = {
   'zh-hant': {

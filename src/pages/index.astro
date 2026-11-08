@@ -20,12 +20,12 @@ const codes = LOCALES.map((l) => l.code);
             (the old codes zh-tw and zh-cn, saved before they were renamed, are turned into zh-hant and zh-hans first),
          2) the browser's language list, in the visitor's order: the first entry the site can serve wins.
             A tag is first compared whole (lower case, "_" turned into "-") with the site's codes, so a site code that carries a
-            region (a future pt-br) is met by pt-BR before anything is simplified.
+            region (pt-br) is met by pt-BR before anything is simplified.
             Chinese that is not an exact code is told apart by script and region (Traditional: zh-TW, zh-HK, zh-MO, Hant -> zh-hant;
             Simplified or plain zh -> zh-hans); every other language is matched by its base subtag against the site's codes
-            (en, ja, es, fr, de), so es-MX, es-ES and es-419 all go to es, fr-CA to fr, de-AT to de; a base subtag that only a
-            regional code carries (pt-PT -> pt-br, once that page exists) goes to that code. A language the site does not
-            have (pt-BR today) is skipped and the next entry is tried,
+            (en, ja, es, fr, de, vi, eo), so es-MX, es-ES and es-419 all go to es, fr-CA to fr, de-AT to de; a base subtag that
+            only a regional code carries (pt-PT -> pt-br) goes to that code. A language the site does not
+            have (ko, say) is skipped and the next entry is tried,
          3) English. */
       (function () {
         var codes = (document.currentScript && document.currentScript.getAttribute('data-codes') || 'en').split(',');
