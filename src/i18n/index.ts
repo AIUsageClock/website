@@ -28,6 +28,7 @@ import { ja } from './ja';
 import { es } from './es';
 import { fr } from './fr';
 import { de } from './de';
+import { ptBr } from './pt-br';
 import { DEFAULT_LOCALE, getLocale } from './locales';
 import { findHtmlProblems } from './html-check';
 import { findHeroFontProblems } from './hero-font-check';
@@ -54,6 +55,7 @@ const DICTS: Record<string, DeepPartial<Messages>> = {
   es,
   fr,
   de,
+  'pt-br': ptBr,
 };
 
 // `set:html` renders the `...Html` strings unescaped, so refuse anything but the few allowed tags before any page is built.

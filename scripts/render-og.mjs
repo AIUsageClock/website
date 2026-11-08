@@ -40,6 +40,7 @@ import { ja } from '../src/i18n/ja.ts';
 import { es } from '../src/i18n/es.ts';
 import { fr } from '../src/i18n/fr.ts';
 import { de } from '../src/i18n/de.ts';
+import { ptBr } from '../src/i18n/pt-br.ts';
 import { LOCALES } from '../src/i18n/locales.ts';
 import { findHeroFontProblems } from '../src/i18n/hero-font-check.ts';
 import { findHeroFontFileProblems } from '../src/i18n/hero-font-files.mjs';
@@ -58,7 +59,7 @@ const HERO_MANIFEST = JSON.parse(readFileSync(join(HERO_FONT_DIR, 'manifest.json
 const HERO_FONTS = HERO_MANIFEST.fonts;
 
 /** Dictionary of every language in locales.ts. A new language must be added here too (the script stops if it is missing). */
-const DICTS = { en, 'zh-hant': zhHant, 'zh-hans': zhHans, ja, es, fr, de };
+const DICTS = { en, 'zh-hant': zhHant, 'zh-hans': zhHans, ja, es, fr, de, 'pt-br': ptBr };
 
 // The site build's two checks (src/i18n/index.ts), for every language in the manifest, on the tagline each picture shows (English wherever a dictionary
 // has no text, as in page() below): the characters against the manifest's list, then the font files against the manifest's size and
