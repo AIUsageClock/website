@@ -9,7 +9,9 @@
  *   2. add a dictionary file next to en.ts (start from `{}`; missing keys fall back to English),
  *   3. register that dictionary in the DICTS map in index.ts,
  *   4. if the language needs its own heading font, add it in BaseLayout.astro and the :lang() rules in global.css,
- *   5. `npm run og` to draw the link-preview image public/og/<code>.png.
+ *   5. add the dictionary to scripts/render-og.mjs and scripts/test-html-check.mjs, then `npm run og` to draw the
+ *      link-preview image public/og/<code>.png,
+ *   6. if the language is hyphenated in the browser, add its :lang() to the `hyphens: auto` rule in global.css.
  */
 export interface LocaleInfo {
   /** URL path segment (/zh-hant/), the value saved in localStorage as `aiuc-lang`, and the dictionary key. */
@@ -38,6 +40,7 @@ export const LOCALES: readonly LocaleInfo[] = [
   { code: 'de', label: 'Deutsch', htmlLang: 'de-DE', hreflang: 'de', ogLocale: 'de_DE' },
   { code: 'pt-br', label: 'Português (Brasil)', htmlLang: 'pt-BR', hreflang: 'pt-BR', ogLocale: 'pt_BR' },
   { code: 'vi', label: 'Tiếng Việt', htmlLang: 'vi', hreflang: 'vi', ogLocale: 'vi_VN' },
+  // ogLocale eo_EO is not confirmed against Facebook's list of locales.
   { code: 'eo', label: 'Esperanto', htmlLang: 'eo', hreflang: 'eo', ogLocale: 'eo_EO' },
 ];
 

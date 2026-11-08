@@ -80,7 +80,7 @@ language menu (`localStorage` key `aiuc-lang`; the old values `zh-tw` and `zh-cn
 serve, then English. Each tag is first compared whole (lower case) with the site's language codes, so a code that carries a
 region is met exactly. Chinese that is not an exact code is told apart by script and region (`zh-TW`, `zh-HK`, `zh-MO` and `Hant`
 go to Traditional, other Chinese to Simplified); every other language is matched by its base subtag, so `es-MX`, `es-ES` and
-`es-419` all go to `/es/`, `fr-CA` to `/fr/`, `de-AT` to `/de/`, and a language the site does not have (`pt-BR`) is skipped.
+`es-419` all go to `/es/`, `fr-CA` to `/fr/`, `de-AT` to `/de/`, and a language the site does not have (`ko`, say) is skipped.
 Without JavaScript, a `<noscript>` meta refresh sends the visitor to `/en/`. The links to each language on the page are the
 fallback for when the script's redirect fails or is blocked.
 
@@ -90,8 +90,9 @@ language (each to that language's home page; text from the dictionaries, English
 ## Adding a language
 
 1. Add an entry to `src/i18n/locales.ts` (its position is its position in the language menu). A code that carries a region
-   (say `pt-br`) is matched whole by the root page's language detection before the base language is tried, so `pt-BR`
-   reaches `/pt-br/` while `pt-PT` does not, unless there is a plain `pt` entry as well.
+   (say `pt-br`) is matched whole by the root page's language detection first, so `pt-BR` reaches `/pt-br/`. When the base
+   language matches no plain code (there is no `pt` entry), the visitor goes to the first code with that base language, so
+   `pt-PT` also reaches `/pt-br/`; if two codes share a base language, the one listed first in `locales.ts` wins.
 2. Create a dictionary next to `src/i18n/en.ts` (start from `{}`; any missing text falls back to English) and register
    it in `src/i18n/index.ts`. A page whose dictionary does not cover every English string is served with
    `<html lang="en">` and `noindex` until it does. The build still succeeds, but prints a warning that lists the missing key
@@ -111,6 +112,8 @@ language (each to that language's home page; text from the dictionaries, English
    and add the `:lang()` rules (see the Chinese and Japanese sections below). A tagline font of its own is a separate step:
    see "Hero tagline fonts" below.
 5. Add the dictionary and, if needed, a font entry to `scripts/render-og.mjs`, then draw the link preview (`npm run og`).
+   Add the dictionary to `scripts/test-html-check.mjs` too. If the language is hyphenated in the browser, add its `:lang()`
+   to the `hyphens: auto` rule in `src/styles/global.css`.
 6. `npm run check` and `npm run build`; the new `dist/<code>/index.html` must exist.
 
 `public/apple-touch-icon.png` is the 1024px app icon scaled to 180px; `node scripts/make-apple-touch-icon.mjs`

@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.11"
-# dependencies = ["segno"]
+# dependencies = ["segno==1.6.6"]
 # ///
 """Write src/assets/donate-qr.svg, the QR code of the donation address.
 
@@ -31,7 +31,10 @@ def main() -> int:
     address = found.group(1)
     qr = segno.make(address, error="m", micro=False)
     svg = qr.svg_inline(scale=1, border=2, dark="#000000", light="#ffffff", omitsize=True)
-    svg = svg.replace("<svg ", '<svg shape-rendering="crispEdges" aria-hidden="true" focusable="false" ', 1)
+    # data-address lets Donate.astro stop the build when this file was made for another address than DONATE_ADDRESS
+    svg = svg.replace(
+        "<svg ", f'<svg data-address="{address}" shape-rendering="crispEdges" aria-hidden="true" focusable="false" ', 1
+    )
     out = ROOT / "src" / "assets" / "donate-qr.svg"
     out.write_bytes(svg.encode("utf-8"))
     print(f"{out.relative_to(ROOT)}: version {qr.version}, {len(svg)} bytes")

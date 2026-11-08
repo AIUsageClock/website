@@ -191,7 +191,7 @@ export const vi: DeepPartial<Messages> = {
           'Các bản phát hành chưa được ký mã, và mã SHA256 được công bố cạnh từng tệp nén.',
         ],
         listHtml: [
-          '<strong>Windows:</strong> nhấp <strong>Thông tin khác</strong>, rồi nhấp <strong>Vẫn chạy</strong>.',
+          '<strong>Windows:</strong> nhấp <strong>Thông tin khác</strong> (More info), rồi nhấp <strong>Vẫn chạy</strong> (Run anyway).',
           '<strong>macOS:</strong> thử mở ứng dụng một lần, rồi dùng <strong>Vẫn mở</strong> trong Cài đặt hệ thống → Quyền riêng tư &amp; bảo mật. Hoặc chạy một lần lệnh <code>xattr -dr com.apple.quarantine ai-usage-clock.app</code>.',
           '<strong>Linux:</strong> hãy cấp quyền thực thi cho <code>ai-usage-clock</code> nếu tệp chưa có quyền này.',
         ],

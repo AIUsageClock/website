@@ -9,6 +9,10 @@ interface Props {
   m: Messages['donate'];
 }
 const { m } = Astro.props;
+// The QR is a committed file: stop the build if it was made for another address than the one printed on the page.
+if (!qrSvg.includes(`data-address="${DONATE_ADDRESS}"`)) {
+  throw new Error('src/assets/donate-qr.svg does not match DONATE_ADDRESS: run  uv run --no-project scripts/make-donate-qr.py');
+}
 ---
 
 <section class="sec" id="donate" aria-labelledby="donate-h">
@@ -19,7 +23,7 @@ const { m } = Astro.props;
         <p class="dn-desc">{m.desc}</p>
       </div>
       <div class="dn-pay">
-        <p class="dn-pills"><span class="dn-pill">Ethereum</span><span class="dn-pill">Polygon</span></p>
+        <p class="dn-pills"><span class="dn-pill">Ethereum</span> <span class="dn-pill">Polygon</span></p>
         <p>{m.pay}</p>
       </div>
       <div class="dn-aside">

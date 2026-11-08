@@ -20,7 +20,7 @@ function report(ok, line) {
   console.log(`${ok ? 'ok   ' : 'FAIL '} ${line}`);
 }
 
-// 1) The seven real dictionaries must pass, and the walk must really have found `...Html` strings to check
+// 1) The ten real dictionaries must pass, and the walk must really have found `...Html` strings to check
 //    (a walk that finds none would pass everything).
 function countHtmlStrings(node, isHtml = false) {
   if (typeof node === 'string') return isHtml ? 1 : 0;
@@ -34,7 +34,7 @@ const dictionaries = { en, 'zh-hant': zhHant, 'zh-hans': zhHans, ja, es, fr, de,
 for (const [code, dict] of Object.entries(dictionaries)) {
   const checked = countHtmlStrings(dict);
   const problems = findHtmlProblems(dict);
-  report(problems.length === 0 && checked > 0, `dictionary ${code.padEnd(5)} ${String(checked).padStart(2)} ...Html strings checked, ${problems.length} problems`);
+  report(problems.length === 0 && checked > 0, `dictionary ${code.padEnd(7)} ${String(checked).padStart(2)} ...Html strings checked, ${problems.length} problems`);
   for (const p of problems) console.log(`         ${p.path}: ${p.message}`);
 }
 
