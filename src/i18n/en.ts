@@ -224,7 +224,7 @@ export const en = {
 
   donate: {
     heading: 'Donate to AI Usage Clock',
-    desc: "AI Usage Clock continues from AI Gauge and is free under the MIT license. It's free to use, whether you chip in or not. If it has saved you some time and you'd like to say thanks, you can send crypto to the address below. It goes to me, DraftingDreamer, for my own development costs, and doesn't buy features, help, or any promise about what comes next.",
+    desc: "AI Usage Clock is released under the MIT license. It's free to use, whether you chip in or not. If it has saved you some time and you'd like to say thanks, you can send crypto to the address below. It goes to me, DraftingDreamer, for my own development costs, and doesn't buy features, help, or any promise about what comes next.",
     pay: "Any token on Ethereum or Polygon is welcome: ETH, POL, USDT, USDC or anything else. It's the same address on both networks.",
     copy: 'Copy',
     copied: 'Copied',

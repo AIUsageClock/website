@@ -214,7 +214,7 @@ export const zhHant: DeepPartial<Messages> = {
 
   donate: {
     heading: '贊助 AI Usage Clock',
-    desc: 'AI Usage Clock 延續自 AI Gauge，以 MIT 授權免費提供。免費使用，贊不贊助都一樣。如果它幫你省了一些時間，想說聲謝謝，可以把加密貨幣轉到下面的地址。這筆錢給 DraftingDreamer（築夢天地）個人，用在我自己的開發開銷上，不換取功能、協助或任何後續承諾。',
+    desc: 'AI Usage Clock 以 MIT 授權提供。免費使用，贊不贊助都一樣。如果它幫你省了一些時間，想說聲謝謝，可以把加密貨幣轉到下面的地址。這筆錢給 DraftingDreamer（築夢天地）個人，用在我自己的開發開銷上，不換取功能、協助或任何後續承諾。',
     pay: 'Ethereum 或 Polygon 鏈上的資產都收，ETH、POL、USDT、USDC 或其他代幣都歡迎。兩條鏈用同一個地址。',
     copy: '複製',
     copied: '已複製',

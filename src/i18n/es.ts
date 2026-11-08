@@ -226,7 +226,7 @@ export const es: DeepPartial<Messages> = {
 
   donate: {
     heading: 'Dona a AI Usage Clock',
-    desc: 'AI Usage Clock continúa el trabajo de AI Gauge y es gratuito, con licencia MIT. Puedes usarlo gratis, hagas un aporte o no. Si te ahorró algo de tiempo y quieres darme las gracias, puedes enviar criptomonedas a la dirección de abajo. El dinero es para mí, DraftingDreamer, y lo uso en mis propios gastos de desarrollo; no compra funciones, ayuda ni ninguna promesa sobre lo que venga después.',
+    desc: 'AI Usage Clock se publica con licencia MIT. Puedes usarlo gratis, hagas un aporte o no. Si te ahorró algo de tiempo y quieres darme las gracias, puedes enviar criptomonedas a la dirección de abajo. El dinero es para mí, DraftingDreamer, y lo uso en mis propios gastos de desarrollo; no compra funciones, ayuda ni ninguna promesa sobre lo que venga después.',
     pay: 'Se aceptan todos los tokens en Ethereum y Polygon: ETH, POL, USDT, USDC o cualquier otro. Es la misma dirección en las dos redes.',
     copy: 'Copiar',
     copied: 'Copiada',
