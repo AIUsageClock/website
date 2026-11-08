@@ -230,7 +230,7 @@ export const en = {
     copied: 'Copied',
     copyFail: 'Selected. Press Ctrl+C (⌘C on Mac) to copy.',
     qrAlt: 'QR code of the donation address',
-    note1: 'Please send on Ethereum or Polygon only. Fees are usually lower on Polygon.',
+    note1: 'Only transfers on Ethereum (ERC20) and Polygon are accepted. If you can use either, Polygon usually has lower fees.',
     note2Html: `Compare this address with <a href="${LINKS.donate}">the copy on GitHub</a> before sending.`,
     note3: "This is the only official address, and I'll never ask you to send to a different one. Transfers can't be reversed, so they can't be refunded.",
     other: 'Starring AI Usage Clock on GitHub or telling a friend helps too.',

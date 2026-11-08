@@ -220,7 +220,7 @@ export const zhTw: DeepPartial<Messages> = {
     copied: '已複製',
     copyFail: '已選取，請按 Ctrl+C（Mac 按 ⌘C）複製。',
     qrAlt: '贊助地址的 QR Code',
-    note1: '只收 Ethereum 和 Polygon 鏈上的轉帳，Polygon 的手續費通常比較低。',
+    note1: '只收 Ethereum（ERC20）和 Polygon 鏈上的轉帳。若兩者都有，建議用 Polygon，手續費通常比較低。',
     note2Html: `轉帳前請和<a href="${LINKS.donate}">GitHub 上的地址</a>比對。`,
     note3: '官方地址只有這一個，我不會要求任何人改轉到別的地址。鏈上轉帳無法撤回，所以無法退款。',
     other: '在 GitHub 幫 AI Usage Clock 按星星，或介紹給朋友，也是幫忙。',

@@ -226,7 +226,7 @@ export const ja: DeepPartial<Messages> = {
     copied: 'コピーしました',
     copyFail: '選択しました。Ctrl+C（Mac は ⌘C）でコピーしてください。',
     qrAlt: '寄付先アドレスの QR コード',
-    note1: '送金できるのは Ethereum と Polygon のみです。手数料は Polygon のほうが安いことが多いです。',
+    note1: 'Ethereum（ERC20）と Polygon 上の送金のみ受け付けています。どちらも使える場合は、手数料が安いことの多い Polygon がおすすめです。',
     note2Html: `送金する前に、<a href="${LINKS.donate}">GitHub に載せているアドレス</a>と照らし合わせてください。`,
     note3: '公式のアドレスはこの 1 つだけで、別のアドレスへの送金をお願いすることはありません。ブロックチェーン上の送金は取り消せないため、返金はできません。',
     other: 'GitHub で AI Usage Clock にスターを付けたり、友人に紹介してもらえるのも助けになります。',

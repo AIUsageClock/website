@@ -236,7 +236,7 @@ export const de: DeepPartial<Messages> = {
     copied: 'Kopiert',
     copyFail: 'Markiert. Drücke Strg+C (⌘C auf dem Mac) zum Kopieren.',
     qrAlt: 'QR-Code der Spendenadresse',
-    note1: 'Bitte sende nur über Ethereum oder Polygon. Die Gebühren sind auf Polygon meist niedriger.',
+    note1: 'Es werden nur Überweisungen auf Ethereum (ERC20) und Polygon akzeptiert. Wenn du beides nutzen kannst, nimm besser Polygon: Die Gebühren sind dort meist niedriger.',
     note2Html: `Vergleiche diese Adresse vor dem Senden mit <a href="${LINKS.donate}">der Adresse auf GitHub</a>.`,
     note3: 'Das ist die einzige offizielle Adresse, und ich werde dich nie bitten, an eine andere zu senden. Überweisungen lassen sich nicht rückgängig machen, deshalb gibt es keine Rückerstattung.',
     other: 'Auch ein Stern für AI Usage Clock auf GitHub oder eine Empfehlung an Freunde hilft.',

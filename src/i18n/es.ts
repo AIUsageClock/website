@@ -232,7 +232,7 @@ export const es: DeepPartial<Messages> = {
     copied: 'Copiada',
     copyFail: 'Seleccionada. Presiona Ctrl+C (⌘C en Mac) para copiarla.',
     qrAlt: 'Código QR de la dirección de donación',
-    note1: 'Envía solo por Ethereum o Polygon. Las comisiones suelen ser más bajas en Polygon.',
+    note1: 'Solo se aceptan transferencias en Ethereum (ERC20) y Polygon. Si puedes usar cualquiera de las dos, te recomiendo Polygon: sus comisiones suelen ser más bajas.',
     note2Html: `Antes de enviar, compara esta dirección con <a href="${LINKS.donate}">la que aparece en GitHub</a>.`,
     note3: 'Esta es la única dirección oficial y nunca te pediré que envíes a otra. Las transferencias no se pueden revertir, así que no es posible hacer reembolsos.',
     other: 'Darle una estrella a AI Usage Clock en GitHub o recomendarlo a un amigo también ayuda.',
