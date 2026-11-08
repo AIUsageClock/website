@@ -218,10 +218,25 @@ export const ja: DeepPartial<Messages> = {
     iconAlt: 'AI Usage Clock のアイコン：緑から黄、オレンジ、赤へと色が変わるリングの中に、時計の文字盤',
   },
 
+  donate: {
+    heading: 'AI Usage Clock に寄付する',
+    desc: 'AI Usage Clock は AI Gauge を引き継いだプロジェクトで、MIT ライセンスのもとで無料で使えます。寄付をしてもしなくても、無料で使えることに変わりはありません。もし時間の節約になって、ひとこと感謝を伝えたいと思っていただけたら、下のアドレスに暗号資産を送ってください。送っていただいたお金は私、DraftingDreamer 個人の開発費に充てます。機能の追加や個別のサポート、今後についての約束と引き換えになるものではありません。',
+    pay: 'Ethereum と Polygon 上のトークンなら何でも歓迎です。ETH、POL、USDT、USDC など、種類は問いません。どちらのネットワークも同じアドレスです。',
+    copy: 'コピー',
+    copied: 'コピーしました',
+    copyFail: '選択しました。Ctrl+C（Mac は ⌘C）でコピーしてください。',
+    qrAlt: '寄付先アドレスの QR コード',
+    note1: '送金できるのは Ethereum と Polygon のみです。手数料は Polygon のほうが安いことが多いです。',
+    note2Html: `送金する前に、<a href="${LINKS.donate}">GitHub に載せているアドレス</a>と照らし合わせてください。`,
+    note3: '公式のアドレスはこの 1 つだけで、別のアドレスへの送金をお願いすることはありません。ブロックチェーン上の送金は取り消せないため、返金はできません。',
+    other: 'GitHub で AI Usage Clock にスターを付けたり、友人に紹介してもらえるのも助けになります。',
+  },
+
   footer: {
     tagline: 'すべての AI の上限が見える。すべてのリセットがわかる。',
     links: {
       github: 'GitHub',
+      donate: '寄付',
       download: 'ダウンロード',
       setup: 'セットアップガイド（英語）',
       usage: '日々の使い方（英語）',

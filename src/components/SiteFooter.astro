@@ -9,8 +9,10 @@ interface Props {
   /** Locale code of the page; picks the translated setup and usage guides when the product repository has them. */
   lang?: string;
   brandHref?: string;
+  /** True on the page that has the donation section (id="donate"): adds the Donate link. */
+  donate?: boolean;
 }
-const { m, lang = 'en', brandHref = '#top' } = Astro.props;
+const { m, lang = 'en', brandHref = '#top', donate = false } = Astro.props;
 
 const links = [
   { href: LINKS.repo, label: m.links.github },
@@ -20,6 +22,8 @@ const links = [
   { href: LINKS.mcp, label: m.links.mcp },
   { href: LINKS.changelog, label: m.links.changelog },
   { href: LINKS.license, label: m.links.license },
+  // #donate exists only on the home page, so the 404 page (the other user of this footer) leaves the link out
+  ...(donate ? [{ href: '#donate', label: m.links.donate }] : []),
 ];
 ---
 

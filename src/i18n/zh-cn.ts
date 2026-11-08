@@ -214,10 +214,25 @@ export const zhCn: DeepPartial<Messages> = {
     iconAlt: 'AI Usage Clock 图标：圆环里是一个钟面，圆环颜色从绿色经黄色、橙色过渡到红色',
   },
 
+  donate: {
+    heading: '赞助 AI Usage Clock',
+    desc: 'AI Usage Clock 延续自 AI Gauge，采用 MIT 许可证免费提供。免费使用，赞助与否都一样。如果它帮你省了一些时间，想说声谢谢，可以把加密货币转到下面的地址。这笔钱给我个人（DraftingDreamer，筑梦天地），用在我自己的开发开销上，不换取功能、协助或任何后续承诺。',
+    pay: 'Ethereum 和 Polygon 链上的资产都收，ETH、POL、USDT、USDC 或其他代币都欢迎。两条链用同一个地址。',
+    copy: '复制',
+    copied: '已复制',
+    copyFail: '已选中，请按 Ctrl+C（Mac 按 ⌘C）复制。',
+    qrAlt: '赞助地址的二维码',
+    note1: '只收 Ethereum 和 Polygon 链上的转账，Polygon 的手续费通常更低。',
+    note2Html: `转账前请和<a href="${LINKS.donate}">GitHub 上的地址</a>核对。`,
+    note3: '官方地址只有这一个，我不会要求任何人改转到别的地址。链上转账无法撤回，所以无法退款。',
+    other: '在 GitHub 上给 AI Usage Clock 点个 Star，或者推荐给朋友，也是一种帮助。',
+  },
+
   footer: {
     tagline: '看见每个 AI 额度，掌握每次重置。',
     links: {
       github: 'GitHub',
+      donate: '赞助',
       download: '下载',
       setup: '设置指南',
       usage: '日常使用',

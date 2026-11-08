@@ -24,6 +24,10 @@ npm run test:html # test the markup rules for the `...Html` dictionary strings (
 npm run og        # redraw the link-preview images (Windows with Microsoft Edge only, see below)
 ```
 
+The donation section (`src/components/Donate.astro`) takes the wallet address from `DONATE_ADDRESS` in `src/site.ts`, the only
+place it is written. Its QR code, `src/assets/donate-qr.svg`, is generated from that value (needs [uv](https://docs.astral.sh/uv/)):
+run `uv run --no-project scripts/make-donate-qr.py` again whenever the address changes.
+
 ## Deployment
 
 The site is published with GitHub Pages at <https://aiusageclock.com/> by `.github/workflows/deploy.yml`. Every push to `main`

@@ -224,10 +224,25 @@ export const es: DeepPartial<Messages> = {
       'Ícono de AI Usage Clock: un reloj dentro de un anillo que pasa de verde a amarillo, naranja y rojo',
   },
 
+  donate: {
+    heading: 'Dona a AI Usage Clock',
+    desc: 'AI Usage Clock continúa el trabajo de AI Gauge y es gratuito, con licencia MIT. Puedes usarlo gratis, hagas un aporte o no. Si te ahorró algo de tiempo y quieres darme las gracias, puedes enviar criptomonedas a la dirección de abajo. El dinero es para mí, DraftingDreamer, y lo uso en mis propios gastos de desarrollo; no compra funciones, ayuda ni ninguna promesa sobre lo que venga después.',
+    pay: 'Se aceptan todos los tokens en Ethereum y Polygon: ETH, POL, USDT, USDC o cualquier otro. Es la misma dirección en las dos redes.',
+    copy: 'Copiar',
+    copied: 'Copiada',
+    copyFail: 'Seleccionada. Presiona Ctrl+C (⌘C en Mac) para copiarla.',
+    qrAlt: 'Código QR de la dirección de donación',
+    note1: 'Envía solo por Ethereum o Polygon. Las comisiones suelen ser más bajas en Polygon.',
+    note2Html: `Antes de enviar, compara esta dirección con <a href="${LINKS.donate}">la que aparece en GitHub</a>.`,
+    note3: 'Esta es la única dirección oficial y nunca te pediré que envíes a otra. Las transferencias no se pueden revertir, así que no es posible hacer reembolsos.',
+    other: 'Darle una estrella a AI Usage Clock en GitHub o recomendarlo a un amigo también ayuda.',
+  },
+
   footer: {
     tagline: 'Mira cada límite de IA. Entérate de cada reinicio.',
     links: {
       github: 'GitHub',
+      donate: 'Donar',
       download: 'Descargar',
       setup: 'Guía de configuración (en inglés)',
       usage: 'Uso diario (en inglés)',

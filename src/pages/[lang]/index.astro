@@ -7,6 +7,7 @@ import Services from '../../components/Services.astro';
 import ResetTimeline from '../../components/ResetTimeline.astro';
 import Faq from '../../components/Faq.astro';
 import DownloadCard from '../../components/DownloadCard.astro';
+import Donate from '../../components/Donate.astro';
 import SiteFooter from '../../components/SiteFooter.astro';
 import { LOCALES, getLocale } from '../../i18n/locales';
 import { t, isComplete, missingPaths, extraPaths, htmlLangFor } from '../../i18n';
@@ -56,6 +57,7 @@ const m = t(lang);
     <ResetTimeline m={m.resets} />
     <Faq m={m.faq} />
     <DownloadCard m={m.download} />
+    <Donate m={m.donate} />
   </main>
-  <SiteFooter m={m.footer} lang={lang} />
+  <SiteFooter m={m.footer} lang={lang} donate />
 </BaseLayout>

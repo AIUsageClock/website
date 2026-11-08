@@ -1,0 +1,115 @@
+---
+// The QR code is a vector made by scripts/make-donate-qr.py from DONATE_ADDRESS and inlined as it is. It is never run through <Image>,
+// which would resample it as a bitmap and blur the modules.
+import qrSvg from '../assets/donate-qr.svg?raw';
+import { DONATE_ADDRESS } from '../site';
+import type { Messages } from '../i18n';
+
+interface Props {
+  m: Messages['donate'];
+}
+const { m } = Astro.props;
+---
+
+<section class="sec" id="donate" aria-labelledby="donate-h">
+  <div class="wrap-b">
+    <div class="dn-grid">
+      <div class="dn-head">
+        <h2 id="donate-h">{m.heading}</h2>
+        <p class="dn-desc">{m.desc}</p>
+      </div>
+      <div class="dn-pay">
+        <p class="dn-pills"><span class="dn-pill">Ethereum</span><span class="dn-pill">Polygon</span></p>
+        <p>{m.pay}</p>
+      </div>
+      <div class="dn-aside">
+        <div class="dn-addrbox">
+          <code class="dn-addr" id="donate-addr" translate="no">{DONATE_ADDRESS}</code>
+          <button class="btn-line dn-copy" id="donate-copy" type="button" data-copied={m.copied} data-fail={m.copyFail}>{m.copy}</button>
+          <span class="dn-status" id="donate-status" role="status" aria-live="polite"></span>
+        </div>
+        <div class="dn-qr" role="img" aria-label={m.qrAlt} set:html={qrSvg} />
+      </div>
+      <ul class="dn-notes">
+        <li>{m.note1}</li>
+        <li set:html={m.note2Html} />
+        <li>{m.note3}</li>
+      </ul>
+      <p class="dn-other">{m.other}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  const button = document.getElementById('donate-copy');
+  const address = document.getElementById('donate-addr');
+  const status = document.getElementById('donate-status');
+
+  if (button && address && status) {
+    let timer: number | undefined;
+    const say = (text: string, ms: number) => {
+      status.textContent = text;
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        status.textContent = '';
+      }, ms);
+    };
+    // When the clipboard cannot be written (permission refused, an insecure page, an old browser), select the address so the
+    // visitor can copy it by hand, and say so. The button stays where it is.
+    const select = () => {
+      const range = document.createRange();
+      range.selectNodeContents(address);
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+      say(button.dataset.fail ?? '', 6000);
+    };
+    button.addEventListener('click', () => {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText((address.textContent ?? '').trim()).then(() => say(button.dataset.copied ?? '', 2000), select);
+      } else {
+        select();
+      }
+    });
+  }
+</script>
+
+<style>
+  .dn-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);grid-template-rows:auto auto auto 1fr;grid-template-areas:"head aside" "pay aside" "notes aside" "other aside";column-gap:clamp(32px,6vw,80px);align-items:start}
+  .dn-head{grid-area:head}
+  .dn-pay{grid-area:pay;margin-top:28px;line-height:1.75}
+  .dn-aside{grid-area:aside;min-width:0}
+  .dn-notes{grid-area:notes}
+  .dn-other{grid-area:other}
+  .dn-head h2{font:600 clamp(2rem,4.6vw,3.4rem)/1.1 var(--f-serif);letter-spacing:-.02em;text-wrap:balance}
+  .dn-desc{margin-top:20px;line-height:1.7;color:var(--ink-2);text-wrap:pretty}
+  .dn-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  .dn-pill{display:inline-block;padding:3px 14px;border:1px solid var(--rule);border-radius:99px;background:var(--mat);color:var(--orange-ink);font:600 13px/1.6 ui-monospace,SFMono-Regular,Consolas,Menlo,monospace}
+  .dn-addrbox{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--rule);border-radius:12px;background:var(--mat)}
+  .dn-addr{flex:1 1 240px;min-width:0;background:none;padding:0;border-radius:0;font:500 15px/1.5 ui-monospace,SFMono-Regular,Consolas,Menlo,monospace;color:var(--ink);word-break:break-all;overflow-wrap:anywhere;user-select:all}
+  .dn-copy{flex:none;cursor:pointer}
+  /* A <button> starts with the browser's own background; the global .btn-line:hover must still be able to fill it */
+  .dn-copy:not(:hover){background:transparent}
+  .dn-status{flex:1 1 100%;font-size:.88rem;line-height:1.4;color:var(--orange-ink)}
+  /* Empty, the live region takes no room (the negative margin cancels the flex gap) but stays in the page, so a screen reader announces what it later says */
+  .dn-status:empty{height:0;margin-top:-12px}
+  /* White in both themes: a QR code needs a light quiet zone around dark modules to be read */
+  .dn-qr{margin-top:20px;width:min(100%,208px);padding:14px;background:#ffffff;border:1px solid #d4d4d4;border-radius:12px;line-height:0}
+  .dn-qr :global(svg){display:block;width:100%;height:auto}
+  .dn-notes{margin-top:24px;padding-left:1.3em;color:var(--ink-2);line-height:1.75;list-style:disc outside}
+  .dn-notes li{display:list-item}
+  .dn-notes li + li{margin-top:6px}
+  .dn-notes :global(a){color:var(--ink)}
+  .dn-other{margin-top:20px;font-size:.92rem;line-height:1.7;color:var(--ink-2)}
+
+  @media (max-width:760px){
+    .dn-grid{display:block}
+    .dn-aside{margin-top:20px}
+  }
+
+  /* Chinese (see global.css) */
+  :global(:root:lang(zh)) .dn-head h2{letter-spacing:0;line-height:1.3}
+
+  /* Japanese (see global.css) */
+  :global(:root:lang(ja)) .dn-head h2{font-size:clamp(1.7rem,3.6vw,2.7rem);letter-spacing:0;line-height:1.4}
+</style>

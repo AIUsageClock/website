@@ -222,10 +222,25 @@ export const fr: DeepPartial<Messages> = {
       'Icône d’AI Usage Clock : un cadran d’horloge dans un anneau qui passe du vert au jaune, puis à l’orange et au rouge',
   },
 
+  donate: {
+    heading: 'Faire un don à AI Usage Clock',
+    desc: 'AI Usage Clock prend la suite d’AI Gauge et est gratuit, sous licence MIT. Vous pouvez l’utiliser gratuitement, que vous donniez ou non. S’il vous a fait gagner un peu de temps et que vous voulez dire merci, vous pouvez envoyer des cryptomonnaies à l’adresse ci-dessous. Elles me reviennent, à moi, DraftingDreamer, pour couvrir mes propres frais de développement ; elles n’achètent ni fonctionnalités, ni assistance, ni aucune promesse sur la suite.',
+    pay: 'Tous les jetons sur Ethereum ou Polygon sont les bienvenus : ETH, POL, USDT, USDC ou tout autre. C’est la même adresse sur les deux réseaux.',
+    copy: 'Copier',
+    copied: 'Copiée',
+    copyFail: 'Adresse sélectionnée. Appuyez sur Ctrl+C (⌘C sur Mac) pour la copier.',
+    qrAlt: 'QR code de l’adresse de don',
+    note1: 'Envoyez uniquement sur Ethereum ou Polygon. Les frais sont généralement plus bas sur Polygon.',
+    note2Html: `Avant d’envoyer, comparez cette adresse avec <a href="${LINKS.donate}">celle affichée sur GitHub</a>.`,
+    note3: 'C’est la seule adresse officielle, et je ne vous demanderai jamais d’envoyer vers une autre. Les transferts sont irréversibles : aucun remboursement n’est possible.',
+    other: 'Mettre une étoile à AI Usage Clock sur GitHub ou en parler à un ami aide aussi.',
+  },
+
   footer: {
     tagline: 'Voyez tous vos quotas d’IA. Suivez chaque remise à zéro.',
     links: {
       github: 'GitHub',
+      donate: 'Faire un don',
       download: 'Télécharger',
       setup: 'Guide de configuration (en anglais)',
       usage: 'Utilisation au quotidien (en anglais)',

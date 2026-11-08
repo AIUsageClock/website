@@ -222,10 +222,25 @@ export const en = {
       'AI Usage Clock app icon: a clock face inside a ring that runs from green through yellow and orange to red',
   },
 
+  donate: {
+    heading: 'Donate to AI Usage Clock',
+    desc: "AI Usage Clock continues from AI Gauge and is free under the MIT license. It's free to use, whether you chip in or not. If it has saved you some time and you'd like to say thanks, you can send crypto to the address below. It goes to me, DraftingDreamer, for my own development costs, and doesn't buy features, help, or any promise about what comes next.",
+    pay: "Any token on Ethereum or Polygon is welcome: ETH, POL, USDT, USDC or anything else. It's the same address on both networks.",
+    copy: 'Copy',
+    copied: 'Copied',
+    copyFail: 'Selected. Press Ctrl+C (⌘C on Mac) to copy.',
+    qrAlt: 'QR code of the donation address',
+    note1: 'Please send on Ethereum or Polygon only. Fees are usually lower on Polygon.',
+    note2Html: `Compare this address with <a href="${LINKS.donate}">the copy on GitHub</a> before sending.`,
+    note3: "This is the only official address, and I'll never ask you to send to a different one. Transfers can't be reversed, so they can't be refunded.",
+    other: 'Starring AI Usage Clock on GitHub or telling a friend helps too.',
+  },
+
   footer: {
     tagline: 'See every AI limit. Know every reset.',
     links: {
       github: 'GitHub',
+      donate: 'Donate',
       download: 'Download',
       setup: 'Setup guide',
       usage: 'Daily use',
