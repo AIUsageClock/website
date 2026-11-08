@@ -4,7 +4,7 @@ import { LOCALES, DEFAULT_LOCALE } from './src/i18n/locales.ts';
 
 // i18n option names and defaults verified against the installed Astro 7.3.8
 // (node_modules/astro/dist/core/config/schemas/base.js):
-//   routing.prefixDefaultLocale      default false  -> true here: /en/, /zh-tw/, /zh-cn/
+//   routing.prefixDefaultLocale      default false  -> true here: /en/, /zh-hant/, /zh-hans/
 //   routing.redirectToDefaultLocale  default false  -> kept false, so "/" is served by
 //                                     src/pages/index.astro (a custom redirect page)
 //                                     instead of a built-in redirect to /en/

@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // Makes the three hero-tagline fonts: one small WOFF2 per language, holding only the characters of that language's
-// hero.line1 and hero.line2 (zh-tw: UoqMunThenKhung, zh-cn: Long Cang, ja: Reggae One).
+// hero.line1 and hero.line2 (zh-hant: UoqMunThenKhung, zh-hans: Long Cang, ja: Reggae One).
 //
 //   node scripts/make-hero-fonts.mjs          needs Node >= 22.22 (package.json engines) and uv (https://docs.astral.sh/uv/)
 //
-// Run it again whenever hero.line1 or hero.line2 changes in zh-tw.ts, zh-cn.ts or ja.ts: the build stops until you do
+// Run it again whenever hero.line1 or hero.line2 changes in zh-hant.ts, zh-hans.ts or ja.ts: the build stops until you do
 // (src/i18n/hero-font-check.ts compares the tagline with the manifest and names the characters that are missing).
 // The other languages (English, Spanish, French, German) keep Fraunces and need nothing.
 //
@@ -30,8 +30,8 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // Node strips the TypeScript types on import; the dictionaries use explicit ".ts" paths for this reason.
 import { en } from '../src/i18n/en.ts';
-import { zhTw } from '../src/i18n/zh-tw.ts';
-import { zhCn } from '../src/i18n/zh-cn.ts';
+import { zhHant } from '../src/i18n/zh-hant.ts';
+import { zhHans } from '../src/i18n/zh-hans.ts';
 import { ja } from '../src/i18n/ja.ts';
 import { heroChars } from '../src/i18n/hero-font-check.ts';
 
@@ -57,8 +57,8 @@ const RAW = `https://raw.githubusercontent.com/google/fonts/${GOOGLE_FONTS_COMMI
  * All three fonts have a single weight (400), so the page sets font-weight: 400 for them (Hero.astro).
  */
 const FONTS = {
-  'zh-tw': {
-    dict: zhTw,
+  'zh-hant': {
+    dict: zhHant,
     family: 'UoqMunThenKhung',
     dir: 'uoqmunthenkhung',
     file: 'UoqMunThenKhung-Regular.ttf',
@@ -66,8 +66,8 @@ const FONTS = {
     licenseSha256: '406ef62322951b6ea94f7a91989971ddd05441e0768e638528b27e5e677c3b91',
     out: 'uoqmunthenkhung-hero.woff2',
   },
-  'zh-cn': {
-    dict: zhCn,
+  'zh-hans': {
+    dict: zhHans,
     family: 'Long Cang',
     dir: 'longcang',
     file: 'LongCang-Regular.ttf',

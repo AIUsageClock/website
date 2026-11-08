@@ -16,13 +16,15 @@ const codes = LOCALES.map((l) => l.code);
   <Fragment slot="head">
     <noscript><meta http-equiv="refresh" content="0;url=/en/" /></noscript>
     <script is:inline data-codes={codes.join(',')}>
-      /* Where to go, in order: 1) the language saved by the language menu (aiuc-lang), if the site has it,
+      /* Where to go, in order: 1) the language saved by the language menu (aiuc-lang), if the site has it
+            (the old codes zh-tw and zh-cn, saved before they were renamed, are turned into zh-hant and zh-hans first),
          2) the browser's language list, in the visitor's order: the first entry the site can serve wins.
             A tag is first compared whole (lower case, "_" turned into "-") with the site's codes, so a site code that carries a
-            region (zh-tw today, a future pt-br) is met by zh-TW or pt-BR before anything is simplified.
-            Chinese that is not an exact code is told apart by script and region (Traditional: zh-TW, zh-HK, zh-MO, Hant -> zh-tw;
-            Simplified or plain zh -> zh-cn); every other language is matched by its base subtag against the site's codes
-            (en, ja, es, fr, de), so es-MX, es-ES and es-419 all go to es, fr-CA to fr, de-AT to de. A language the site does not
+            region (a future pt-br) is met by pt-BR before anything is simplified.
+            Chinese that is not an exact code is told apart by script and region (Traditional: zh-TW, zh-HK, zh-MO, Hant -> zh-hant;
+            Simplified or plain zh -> zh-hans); every other language is matched by its base subtag against the site's codes
+            (en, ja, es, fr, de), so es-MX, es-ES and es-419 all go to es, fr-CA to fr, de-AT to de; a base subtag that only a
+            regional code carries (pt-PT -> pt-br, once that page exists) goes to that code. A language the site does not
             have (pt-BR today) is skipped and the next entry is tried,
          3) English. */
       (function () {
@@ -34,15 +36,20 @@ const codes = LOCALES.map((l) => l.code);
           var p = full.split('-');
           if (known(full)) return full;
           if (p[0] === 'zh') {
-            if (p.indexOf('hant') !== -1) return 'zh-tw';
-            if (p.indexOf('hans') !== -1) return 'zh-cn';
-            if (p.indexOf('tw') !== -1 || p.indexOf('hk') !== -1 || p.indexOf('mo') !== -1) return 'zh-tw';
-            return 'zh-cn';
+            if (p.indexOf('hant') !== -1) return 'zh-hant';
+            if (p.indexOf('hans') !== -1) return 'zh-hans';
+            if (p.indexOf('tw') !== -1 || p.indexOf('hk') !== -1 || p.indexOf('mo') !== -1) return 'zh-hant';
+            return 'zh-hans';
           }
-          return p[0] && known(p[0]) ? p[0] : null;
+          if (!p[0]) return null;
+          if (known(p[0])) return p[0];
+          for (var k = 0; k < codes.length; k++) { if (codes[k].split('-')[0] === p[0]) return codes[k]; }
+          return null;
         }
         var saved = null;
         try { saved = localStorage.getItem('aiuc-lang'); } catch (e) { saved = null; }
+        var legacy = { 'zh-tw': 'zh-hant', 'zh-cn': 'zh-hans' };
+        if (saved && legacy.hasOwnProperty(saved)) saved = legacy[saved];
         if (saved && known(saved)) { go(saved); return; }
         var tags = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || ''];
         for (var i = 0; i < tags.length; i++) {

@@ -3,7 +3,7 @@
   "generator": {
     "script": "scripts/make-hero-fonts.mjs",
     "version": 1,
-    "generated": "2026-10-17",
+    "generated": "2026-11-08",
     "fontTools": "4.67.0",
     "brotli": "1.2.0"
   },
@@ -12,7 +12,7 @@
     "commit": "47d54ca1ebb14fd864695f1d39dc734f39017c33"
   },
   "fonts": {
-    "zh-tw": {
+    "zh-hant": {
       "family": "UoqMunThenKhung",
       "license": "OFL-1.1",
       "copyright": "Copyright 2025 The UoqMunThenKhung Project Authors (https://github.com/MoonlitOwen/ThenKhung)",
@@ -27,7 +27,7 @@
       "glyphs": 35,
       "chars": " AI。個度掌握次每看置見重額，"
     },
-    "zh-cn": {
+    "zh-hans": {
       "family": "Long Cang",
       "license": "OFL-1.1",
       "copyright": "Copyright 2018 The Long Cang Project Authors (https://github.com/googlefonts/longcang)",

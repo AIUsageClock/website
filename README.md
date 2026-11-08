@@ -60,8 +60,8 @@ Every language has its own prefix, and `/` is a small page that sends the visito
 | URL | Language | `<html lang>` | hreflang | og:locale |
 |---|---|---|---|---|
 | `/en/` | English | `en` | `en` | `en_US` |
-| `/zh-tw/` | Traditional Chinese | `zh-Hant-TW` | `zh-TW` | `zh_TW` |
-| `/zh-cn/` | Simplified Chinese | `zh-Hans-CN` | `zh-CN` | `zh_CN` |
+| `/zh-hant/` | Traditional Chinese | `zh-Hant-TW` | `zh-Hant` | `zh_TW` |
+| `/zh-hans/` | Simplified Chinese | `zh-Hans-CN` | `zh-Hans` | `zh_CN` |
 | `/ja/` | Japanese | `ja` | `ja` | `ja_JP` |
 | `/es/` | Spanish (Latin America, neutral) | `es-419` | `es` | `es_LA` |
 | `/fr/` | French | `fr-FR` | `fr` | `fr_FR` |
@@ -73,7 +73,7 @@ seven languages plus `x-default`, which points at `/`. The 404 page lists none. 
 `hreflangAlternates()` in `src/i18n/alternates.ts`, which `BaseLayout.astro` and `/sitemap.xml` both call.
 
 **Root page (`/`)**: the script on it sends the visitor to the first of these that exists: the language saved by the
-language menu (`localStorage` key `aiuc-lang`), then the first entry of the browser's language list that the site can
+language menu (`localStorage` key `aiuc-lang`; the old values `zh-tw` and `zh-cn` count as `zh-hant` and `zh-hans`), then the first entry of the browser's language list that the site can
 serve, then English. Each tag is first compared whole (lower case) with the site's language codes, so a code that carries a
 region is met exactly. Chinese that is not an exact code is told apart by script and region (`zh-TW`, `zh-HK`, `zh-MO` and `Hant`
 go to Traditional, other Chinese to Simplified); every other language is matched by its base subtag, so `es-MX`, `es-ES` and
@@ -125,7 +125,7 @@ regenerates it.
   only the font chunks that the headings actually use.
 - The Chinese typography (no italics, tracking, line height, punctuation) is the "Chinese pages" block in
   `src/styles/global.css` plus a short block at the end of each component that needs one. All of it keys on `:lang(zh)`.
-- `docLink()` in `src/site.ts` points the setup and usage links at `docs/setup.zh-TW.md`, `docs/setup.zh-CN.md` and the
+- `docLink()` in `src/site.ts` points the setup and usage links at `docs/setup.zh-Hant.md`, `docs/setup.zh-Hans.md` and the
   matching usage files. Documents without a translation (MCP guard, security policy) link to the English file.
 
 ## Japanese page
@@ -149,8 +149,8 @@ languages; every other heading keeps Noto Serif TC, SC or JP, and English, Spani
 
 | Page | Font | Weight |
 |---|---|---|
-| Traditional Chinese (`zh-tw`) | UoqMunThenKhung | 400 |
-| Simplified Chinese (`zh-cn`) | Long Cang | 400 |
+| Traditional Chinese (`zh-hant`) | UoqMunThenKhung | 400 |
+| Simplified Chinese (`zh-hans`) | Long Cang | 400 |
 | Japanese (`ja`) | Reggae One | 400 |
 
 - The font files are tiny subsets: one WOFF2 per language holding only the characters of that language's two tagline lines,
@@ -219,7 +219,7 @@ Each language has a 1200x630 picture for `og:image` and `twitter:image` (`public
 
 The pictures are committed. Redraw them when the tagline, the brand or the screenshot changes, and whenever a dictionary's
 `hero.kicker`, `hero.line1` or `hero.line2` changes (a language whose dictionary has no text yet is drawn in English).
-When a tagline of zh-tw, zh-cn or ja changes, do it in this order: change the tagline, make the hero fonts again
+When a tagline of zh-hant, zh-hans or ja changes, do it in this order: change the tagline, make the hero fonts again
 (`node scripts/make-hero-fonts.mjs`, see "Hero tagline fonts"), then redraw. `scripts/render-og.mjs` makes the same checks as the
 build (the tagline's characters against `manifest.json`, the font files against its size and SHA-256) and stops with that
 instruction when they fail, so it never draws a tagline in a font that does not hold its characters.

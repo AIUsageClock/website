@@ -12,7 +12,7 @@
  *   5. `npm run og` to draw the link-preview image public/og/<code>.png.
  */
 export interface LocaleInfo {
-  /** URL path segment (/zh-tw/), the value saved in localStorage as `aiuc-lang`, and the dictionary key. */
+  /** URL path segment (/zh-hant/), the value saved in localStorage as `aiuc-lang`, and the dictionary key. */
   code: string;
   /** The language's own name, shown in the language menu. */
   label: string;
@@ -28,8 +28,8 @@ export const DEFAULT_LOCALE = 'en';
 
 export const LOCALES: readonly LocaleInfo[] = [
   { code: 'en', label: 'English', htmlLang: 'en', hreflang: 'en', ogLocale: 'en_US' },
-  { code: 'zh-tw', label: '繁體中文', htmlLang: 'zh-Hant-TW', hreflang: 'zh-TW', ogLocale: 'zh_TW' },
-  { code: 'zh-cn', label: '简体中文', htmlLang: 'zh-Hans-CN', hreflang: 'zh-CN', ogLocale: 'zh_CN' },
+  { code: 'zh-hant', label: '繁體中文', htmlLang: 'zh-Hant-TW', hreflang: 'zh-Hant', ogLocale: 'zh_TW' },
+  { code: 'zh-hans', label: '简体中文', htmlLang: 'zh-Hans-CN', hreflang: 'zh-Hans', ogLocale: 'zh_CN' },
   { code: 'ja', label: '日本語', htmlLang: 'ja', hreflang: 'ja', ogLocale: 'ja_JP' },
   // Latin-American Spanish: <html lang="es-419"> tells browsers and screen readers which Spanish it is,
   // while hreflang and og:locale carry the broader codes that search engines and Open Graph expect.

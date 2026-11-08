@@ -20,7 +20,7 @@
 // Edge is looked up in its two standard install folders; set EDGE_PATH to use another browser binary.
 //
 // Before it draws anything it makes the site build's two checks (src/i18n/index.ts), but for every language in the manifest
-// (the build skips a language whose dictionary is incomplete; a picture uses the tagline font either way): the tagline of zh-tw, zh-cn and ja
+// (the build skips a language whose dictionary is incomplete; a picture uses the tagline font either way): the tagline of zh-hant, zh-hans and ja
 // must use only characters its subset font covers, and the font files must be the ones manifest.json describes. After changing a
 // tagline, make the fonts first (`node scripts/make-hero-fonts.mjs`), then run this script: otherwise the pictures would show the
 // new characters in a fallback font, not the one the site uses. The script stops with a message when a check fails.
@@ -34,8 +34,8 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import sharp from 'sharp';
 // Node strips the TypeScript types on import; the dictionaries use explicit ".ts" paths for this reason.
 import { en } from '../src/i18n/en.ts';
-import { zhTw } from '../src/i18n/zh-tw.ts';
-import { zhCn } from '../src/i18n/zh-cn.ts';
+import { zhHant } from '../src/i18n/zh-hant.ts';
+import { zhHans } from '../src/i18n/zh-hans.ts';
 import { ja } from '../src/i18n/ja.ts';
 import { es } from '../src/i18n/es.ts';
 import { fr } from '../src/i18n/fr.ts';
@@ -52,13 +52,13 @@ const require = createRequire(import.meta.url);
 /** Absolute file:// URL of a file inside a Fontsource package, e.g. fontCss('fraunces/opsz.css'). */
 const fontCss = (spec) => pathToFileURL(require.resolve(`@fontsource-variable/${spec}`)).href;
 
-/** Languages with their own tagline font (zh-tw, zh-cn, ja): code -> { family, file, ... } from the manifest that scripts/make-hero-fonts.mjs writes. */
+/** Languages with their own tagline font (zh-hant, zh-hans, ja): code -> { family, file, ... } from the manifest that scripts/make-hero-fonts.mjs writes. */
 const HERO_FONT_DIR = join(root, 'src', 'assets', 'fonts', 'hero');
 const HERO_MANIFEST = JSON.parse(readFileSync(join(HERO_FONT_DIR, 'manifest.json'), 'utf8'));
 const HERO_FONTS = HERO_MANIFEST.fonts;
 
 /** Dictionary of every language in locales.ts. A new language must be added here too (the script stops if it is missing). */
-const DICTS = { en, 'zh-tw': zhTw, 'zh-cn': zhCn, ja, es, fr, de };
+const DICTS = { en, 'zh-hant': zhHant, 'zh-hans': zhHans, ja, es, fr, de };
 
 // The site build's two checks (src/i18n/index.ts), for every language in the manifest, on the tagline each picture shows (English wherever a dictionary
 // has no text, as in page() below): the characters against the manifest's list, then the font files against the manifest's size and
@@ -95,14 +95,14 @@ const LATIN = {
  * font stacks. Spanish, French and German need nothing extra: the Fraunces and Inter files carry the accented letters.
  */
 const EXTRA = {
-  'zh-tw': {
+  'zh-hant': {
     css: [...LATIN.css, fontCss('noto-serif-tc/index.css')],
     serif: '"Fraunces Variable","Noto Serif TC Variable","Songti TC","PMingLiU",serif',
     sans: '"Inter Variable","PingFang TC","Microsoft JhengHei","Noto Sans TC",system-ui,sans-serif',
     cjk: true,
     startFs: 62,
   },
-  'zh-cn': {
+  'zh-hans': {
     css: [...LATIN.css, fontCss('noto-serif-sc/index.css')],
     serif: '"Fraunces Variable","Noto Serif SC Variable","Songti SC","SimSun",serif',
     sans: '"Inter Variable","PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif',

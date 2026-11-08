@@ -3,11 +3,11 @@ import { LINKS, VERSION } from '../site.ts';
 
 /**
  * Simplified Chinese (Mainland China), written natively rather than translated from en.ts.
- * Facts follow en.ts; wording follows the zh-CN README (https://github.com/AIUsageClock/ai-usage-clock/blob/main/README.zh-CN.md).
+ * Facts follow en.ts; wording follows the zh-Hans README (https://github.com/AIUsageClock/ai-usage-clock/blob/main/README.zh-Hans.md).
  * Terms: widget = 小组件, tile = 卡片, Banked = 重置券, FAQ = 常见问题, beta = 测试版.
  * Keep UI names that the app shows in English (Settings, Codex Resets, Announced, Reset, Banked, Watch) in English.
  */
-export const zhCn: DeepPartial<Messages> = {
+export const zhHans: DeepPartial<Messages> = {
   meta: {
     title: 'AI Usage Clock — 看见每个 AI 额度，掌握每次重置。',
     description:

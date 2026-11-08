@@ -1,11 +1,11 @@
 /**
  * Dictionary lookup with English fallback.
  *
- *   t('zh-tw')            -> every string for that language, English wherever it has no translation
- *   isComplete('zh-tw')   -> true only when nothing English has is missing from that language
- *   missingPaths('zh-tw') -> what is missing: key paths, plus "faq.items.unsigned.listHtml: en 3 / zh-tw 2" for a list shorter than English
- *   extraPaths('zh-tw')   -> what is extra: "faq.items.data.parasHtml: en 2 / zh-tw 3" for a list longer than English
- *   htmlLangFor('zh-tw')  -> <html lang> to use: the language's own tag when complete, "en" otherwise
+ *   t('zh-hant')            -> every string for that language, English wherever it has no translation
+ *   isComplete('zh-hant')   -> true only when nothing English has is missing from that language
+ *   missingPaths('zh-hant') -> what is missing: key paths, plus "faq.items.unsigned.listHtml: en 3 / zh-hant 2" for a list shorter than English
+ *   extraPaths('zh-hant')   -> what is extra: "faq.items.data.parasHtml: en 2 / zh-hant 3" for a list longer than English
+ *   htmlLangFor('zh-hant')  -> <html lang> to use: the language's own tag when complete, "en" otherwise
  *
  * Pages that are not fully translated are served with <html lang="en"> and <meta name="robots" content="noindex">,
  * so a half-translated page is never labelled as, or indexed as, the other language. The build does not fail for it, but
@@ -22,8 +22,8 @@
  * drawn in that font (the font files themselves are checked for every language in the manifest).
  */
 import { en } from './en';
-import { zhTw } from './zh-tw';
-import { zhCn } from './zh-cn';
+import { zhHant } from './zh-hant';
+import { zhHans } from './zh-hans';
 import { ja } from './ja';
 import { es } from './es';
 import { fr } from './fr';
@@ -48,8 +48,8 @@ export type DeepPartial<T> = T extends readonly (infer U)[]
 /** Register a new language's dictionary here (and in locales.ts). */
 const DICTS: Record<string, DeepPartial<Messages>> = {
   en,
-  'zh-tw': zhTw,
-  'zh-cn': zhCn,
+  'zh-hant': zhHant,
+  'zh-hans': zhHans,
   ja,
   es,
   fr,

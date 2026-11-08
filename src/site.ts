@@ -16,13 +16,13 @@ export const DONATE_ADDRESS = '0x6c60bFCaDfb3AD63eC6D821baB0E6323361BFD4f';
 
 /**
  * Documents that have a translated copy in the product repository, by locale code.
- * The file name is `<doc>.md` for English and `<doc>.<suffix>.md` for the others (docs/setup.zh-TW.md).
+ * The file name is `<doc>.md` for English and `<doc>.<suffix>.md` for the others (docs/setup.zh-Hant.md).
  * A language that is not listed, or a document that is not translated (mcp.md, SECURITY.md), links to the English file.
  * Paths were checked against `git ls-tree -r --name-only main` of the product repository.
  */
 const DOC_SUFFIX: Record<string, string> = {
-  'zh-tw': '.zh-TW',
-  'zh-cn': '.zh-CN',
+  'zh-hant': '.zh-Hant',
+  'zh-hans': '.zh-Hans',
 };
 
 /** Link to a translated guide in the product repository, in the visitor's language when a translation exists. */

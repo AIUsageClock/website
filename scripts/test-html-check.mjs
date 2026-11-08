@@ -2,8 +2,8 @@
 // Run it with `npm run test:html`. It needs no dependencies (Node >= 22.18 imports the .ts files directly) and exits 1 when any case fails.
 import { findHtmlProblems } from '../src/i18n/html-check.ts';
 import { en } from '../src/i18n/en.ts';
-import { zhTw } from '../src/i18n/zh-tw.ts';
-import { zhCn } from '../src/i18n/zh-cn.ts';
+import { zhHant } from '../src/i18n/zh-hant.ts';
+import { zhHans } from '../src/i18n/zh-hans.ts';
 import { ja } from '../src/i18n/ja.ts';
 import { es } from '../src/i18n/es.ts';
 import { fr } from '../src/i18n/fr.ts';
@@ -27,7 +27,7 @@ function countHtmlStrings(node, isHtml = false) {
   }
   return 0;
 }
-const dictionaries = { en, 'zh-tw': zhTw, 'zh-cn': zhCn, ja, es, fr, de };
+const dictionaries = { en, 'zh-hant': zhHant, 'zh-hans': zhHans, ja, es, fr, de };
 for (const [code, dict] of Object.entries(dictionaries)) {
   const checked = countHtmlStrings(dict);
   const problems = findHtmlProblems(dict);
