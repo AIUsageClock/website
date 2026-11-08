@@ -37,6 +37,7 @@ export const LOCALES: readonly LocaleInfo[] = [
   { code: 'fr', label: 'Français', htmlLang: 'fr-FR', hreflang: 'fr', ogLocale: 'fr_FR' },
   { code: 'de', label: 'Deutsch', htmlLang: 'de-DE', hreflang: 'de', ogLocale: 'de_DE' },
   { code: 'pt-br', label: 'Português (Brasil)', htmlLang: 'pt-BR', hreflang: 'pt-BR', ogLocale: 'pt_BR' },
+  { code: 'vi', label: 'Tiếng Việt', htmlLang: 'vi', hreflang: 'vi', ogLocale: 'vi_VN' },
 ];
 
 export function getLocale(code: string): LocaleInfo {
