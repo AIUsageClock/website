@@ -47,7 +47,7 @@ const back = LOCALES.map((l) => ({
   .nf .back{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 12px;max-width:40em;margin-top:32px}
   .nf .back a{text-align:center}
   @media (max-width:560px){
-    /* seven links no longer share rows: one per line, as wide as the longest one, so the column looks tidy */
+    /* the links no longer share rows: one per line, as wide as the longest one, so the column looks tidy */
     .nf .back{flex-direction:column;align-items:stretch;width:min(100%,18em);gap:10px}
     .nf .back a{display:flex}
   }

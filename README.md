@@ -6,8 +6,8 @@ usage limits of your AI services and picks up Codex and Claude reset announcemen
 
 ## Status
 
-Work in progress. The site is built with [Astro](https://astro.build): the home page is in place in seven
-languages (English, Traditional Chinese, Simplified Chinese, Japanese, Latin-American Spanish, French and German),
+Work in progress. The site is built with [Astro](https://astro.build): the home page is in place in ten
+languages (English, Traditional Chinese, Simplified Chinese, Japanese, Latin-American Spanish, French, German, Brazilian Portuguese, Vietnamese and Esperanto),
 and every push to `main` is built and published to GitHub Pages (see [Deployment](#deployment)).
 
 ## Development
@@ -69,7 +69,7 @@ Every language has its own prefix, and `/` is a small page that sends the visito
 
 The table lives in `src/i18n/locales.ts`; the language menu, the hreflang alternates, the sitemap, the Astro i18n routing and the
 link-preview images all read from it. The hreflang alternates are listed by each language page and by the root page: all
-seven languages plus `x-default`, which points at `/`. The 404 page lists none. They are built in one place,
+ten languages plus `x-default`, which points at `/`. The 404 page lists none. They are built in one place,
 `hreflangAlternates()` in `src/i18n/alternates.ts`, which `BaseLayout.astro` and `/sitemap.xml` both call.
 
 **Root page (`/`)**: the script on it sends the visitor to the first of these that exists: the language saved by the
@@ -145,7 +145,7 @@ regenerates it.
 ## Hero tagline fonts
 
 The two big tagline lines at the top of the home page (`hero.line1` and `hero.line2`) have a font of their own on three
-languages; every other heading keeps Noto Serif TC, SC or JP, and English, Spanish, French and German keep Fraunces.
+languages; every other heading keeps Noto Serif TC, SC or JP, and English and the Latin-script languages keep Fraunces.
 
 | Page | Font | Weight |
 |---|---|---|
@@ -200,11 +200,11 @@ languages; every other heading keeps Noto Serif TC, SC or JP, and English, Spani
   4. Run `node scripts/make-hero-fonts.mjs`, which writes the WOFF2, its `OFL-<Font>.txt` and the new `manifest.json` entry,
      then `npm run og` (the tagline font of a picture comes from the manifest) and `npm run build`; commit the changed files.
 
-## Spanish, French and German pages
+## Spanish, French, German, Portuguese, Vietnamese and Esperanto pages
 
 - Nothing extra is downloaded: the Fraunces and Inter files from Fontsource have `latin` and `latin-ext` slices, which cover
-  é, ñ, ü, ß, œ, ç and the guillemets « ». The browser fetches a slice only when a page uses a character in its range.
-- Body text hyphenates (`hyphens: auto`, for `:lang(es)`, `:lang(fr)`, `:lang(de)`; it needs `<html lang>` to name the language,
+  é, ñ, ü, ß, œ, ç, ã, õ, ĉ ĝ ĥ ĵ ŝ ŭ and the guillemets « ». The Vietnamese letters (ệ, ặ, ỗ, ữ …) come from the `vietnamese` slice. The browser fetches a slice only when a page uses a character in its range.
+- Body text hyphenates (`hyphens: auto`, for `:lang(es)`, `:lang(fr)`, `:lang(de)`, `:lang(pt)`; Vietnamese and Esperanto are left alone; it needs `<html lang>` to name the language,
   which a fully translated page does). Buttons and labels never hyphenate.
 - Headings carry `overflow-wrap: break-word`, so a long German compound word breaks as a last resort instead of pushing the
   page wider than the screen.

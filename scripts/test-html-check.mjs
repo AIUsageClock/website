@@ -8,6 +8,7 @@ import { ja } from '../src/i18n/ja.ts';
 import { es } from '../src/i18n/es.ts';
 import { fr } from '../src/i18n/fr.ts';
 import { de } from '../src/i18n/de.ts';
+import { eo } from '../src/i18n/eo.ts';
 import { vi } from '../src/i18n/vi.ts';
 import { ptBr } from '../src/i18n/pt-br.ts';
 
@@ -29,7 +30,7 @@ function countHtmlStrings(node, isHtml = false) {
   }
   return 0;
 }
-const dictionaries = { en, 'zh-hant': zhHant, 'zh-hans': zhHans, ja, es, fr, de, 'pt-br': ptBr, vi };
+const dictionaries = { en, 'zh-hant': zhHant, 'zh-hans': zhHans, ja, es, fr, de, 'pt-br': ptBr, vi, eo };
 for (const [code, dict] of Object.entries(dictionaries)) {
   const checked = countHtmlStrings(dict);
   const problems = findHtmlProblems(dict);
